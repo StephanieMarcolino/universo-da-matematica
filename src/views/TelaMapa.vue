@@ -91,6 +91,14 @@ export default {
   height: 100%;
   font-size: 1.2rem;
   border-radius: 1;
+  font-weight: bold
+}
+
+.level-button:hover{
+  background-color: white;
+    border-color: #0097fc;
+    color: #051a77;
+    font-weight: bold
 }
 
 .level-text {
