@@ -64,6 +64,8 @@ export default {
   methods: {
     selectLevel(levelId) {
       alert(`Nível ${levelId} selecionado!`);
+      localStorage.setItem('nivelSelecionado', levelId);
+      this.$router.push(`/pergunta/${levelId}`);
     },
   },
 };

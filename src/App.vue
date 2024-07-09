@@ -1,5 +1,7 @@
 <template>
   <TelaMapa v-if="isMapaPage"/>
+
+  <TelaPergunta v-if="isPerguntaPage"/>
   
   <TelaLogin v-if="isLoginPage" />
 
@@ -10,6 +12,7 @@
 import TelaMapa from './views/TelaMapa.vue'
 import TelaLogin from '@/views/TelaLogin.vue'
 import TelaCadastro from '@/views/TelaCadastro.vue'
+import TelaPergunta from '@/views/TelaPergunta.vue'
 
 export default {
   name: 'App',
@@ -17,6 +20,7 @@ export default {
     TelaMapa,
     TelaLogin,
     TelaCadastro, 
+    TelaPergunta
   },
   computed: {
     isLoginPage() {
@@ -27,6 +31,9 @@ export default {
     },
     isMapaPage() {
       return this.$route.name === "mapa";
+    },
+    isPerguntaPage() {
+      return this.$route.name === "pergunta";
     },
   }
 };

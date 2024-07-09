@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import TelaLogin from '@/views/TelaLogin.vue'
 import TelaCadastro from '@/views/TelaCadastro.vue'
 import TelaMapa from '@/views/TelaMapa.vue';
+import TelaPergunta from '@/views/TelaPergunta.vue'
 
 const routes = [
   
@@ -23,6 +24,12 @@ const routes = [
     path: '/mapa',
     name: 'mapa',
     component: TelaMapa, 
+  },
+  {
+    path: '/pergunta/:id',
+    name: 'pergunta',
+    component: TelaPergunta,
+    props: true, 
   },
 ];
 
