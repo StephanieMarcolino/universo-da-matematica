@@ -1,12 +1,5 @@
 <template>
     <div class="vh-100 vw-100 cadastro-container">
-        <div class="hello-cadastro-container">
-            <div class="hello-container">
-                <div class="sm-7">
-                    <h2 class="text-center">Olá</h2>
-                    <h5 class="text-center">Bem-vindo ao universo da matemática!</h5>
-                </div>
-            </div>
             <div sm="7" class="cadastro-form">
                 <h2 class="text-center mb-5 title-cadastro">Faça o cadastro</h2>
                 <form @submit.prevent="submitForm">
@@ -42,7 +35,6 @@
                 </form>
             </div>
         </div>
-    </div>
 </template>
 
 <script>
@@ -57,10 +49,10 @@ export default {
     methods: {
         async cadastrar() {
             alert('Cadastro realizado com sucesso!');
-            this.$router.push('/login');
+            this.$router.push('/login-professor');
         },
         voltar() {
-            this.$router.push('/login');
+            this.$router.push('/login-professor');
         }
     }
 };
@@ -79,34 +71,18 @@ export default {
     background-position: center;
 }
 
-.hello-cadastro-container {
-    display: flex;
-    border-radius: 5px;
-    flex-direction: column;
-    align-items: center;
-    max-width: 400px;
-}
-
-.hello-container {
-    width: 100%;
-    background: linear-gradient(90deg, #0097fc 0%, #051a77 100%);
-    color: white;
-    padding: 20px;
-    margin-bottom: 0px;
-}
-
 .cadastro-form {
-    width: 100%;
     background-color: rgba(255, 255, 255, 0.8);
     padding: 20px;
+    border-radius: 5px;
+    max-width: 400px;
+    width: 100%;
 }
 
 .btn-primary {
-    background: linear-gradient(90deg, #0097fc 0%, #051a77 100%);
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(90deg, rgba(10, 10, 50, 1) 0%, rgba(0, 0, 100, 1) 100%);
 }
 
-.btn-primary:hover,
 .btn-outline-secondary:hover {
     background-color: #0097fc;
     border-color: #0097fc;

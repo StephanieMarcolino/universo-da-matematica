@@ -10,10 +10,10 @@
         <div class="card">
             <h2>{{ perguntaAtual.id }}. {{ perguntaAtual.pergunta }}</h2>
             <hr />
-            <div class="card-alternativa" v-for="(alternativa, index) in alternativasEmbaralhadas" :key="index">
+            <div class="card-alternativa" v-for="(alternativa, index) in alternativasEmbaralhadas" :key="index" @click="responder(index)">
                 <h2>{{ index + 1 }}. {{ alternativa.texto }}</h2>
                 <input type="radio" :id="'alternativa' + index" name="alternativa" class="radio-button"
-                    v-model="respostaSelecionada" :value="index">
+                    v-model="respostaSelecionada" :value="index" />
             </div>
 
             <button type="button" class="btn btn-outline-primary" @click="conferir">Ok</button>
@@ -141,6 +141,9 @@ export default {
             }
             return array;
         },
+        responder(index) {
+            this.respostaSelecionada = index; // Define a resposta selecionada ao clicar na alternativa
+        },
         conferir() {
             // Lógica para conferir a resposta selecionada
             if (this.respostaSelecionada !== null) {
@@ -171,8 +174,6 @@ export default {
 };
 </script>
   
-  
-  
 <style scoped>
 .background {
     display: flex;
@@ -191,7 +192,7 @@ export default {
     align-items: center;
     max-width: 600px;
     width: 60%;
-    height: 60%;
+    height: auto;
     background-color: rgba(255, 255, 255, 0.8);
 }
 
@@ -201,16 +202,45 @@ export default {
     align-items: center;
     max-width: 400px;
     width: 80%;
-    height: 10%;
+    height: 50px; /* Altura reduzida */
     border: 1px solid grey;
     color: grey;
     border-radius: 5px;
-    padding: 10px;
-    margin-top: 10px;
+    padding: 5px; /* Reduzir o padding */
+    margin-bottom: 5px;
+}
+
+.card-alternativa:hover {
+    background-color: rgba(0, 123, 255, 0.1); /* Efeito de destaque ao passar o mouse */
 }
 
 .radio-button {
     margin-left: auto;
+    width: 20px; /* Largura do botão de rádio */
+    height: 20px; /* Altura do botão de rádio */
+    appearance: none; /* Remove o estilo padrão */
+    background-color: white; /* Cor de fundo do botão de rádio */
+    border: 2px solid grey; /* Borda do botão de rádio */
+    border-radius: 50%; /* Forma circular */
+    position: relative;
+    cursor: pointer;
+}
+
+.radio-button:checked {
+    background-color: white; /* Fundo branco quando selecionado */
+    border-color: blue; /* Borda azul quando selecionado */
+}
+
+.radio-button:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%; /* Centraliza verticalmente */
+    left: 50%; /* Centraliza horizontalmente */
+    width: 10px; /* Tamanho do círculo interno */
+    height: 10px; /* Tamanho do círculo interno */
+    background-color: blue; /* Cor do círculo interno */
+    border-radius: 50%; /* Forma circular */
+    transform: translate(-50%, -50%); /* Centraliza o círculo interno */
 }
 
 .btn-outline-primary {
