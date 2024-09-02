@@ -1,11 +1,10 @@
 <template>
     <div v-if="perguntaAtual" class="vh-100 vw-100 background">
-
         <div class="vidas">
-    <div :class="{ 'coracao-cheio': vidas >= 1, 'coracao-vazio': vidas < 1 }"></div>
-    <div :class="{ 'coracao-cheio': vidas >= 2, 'coracao-vazio': vidas < 2 }"></div>
-    <div :class="{ 'coracao-cheio': vidas >= 3, 'coracao-vazio': vidas < 3 }"></div>
-</div>
+            <div :class="{ 'coracao-cheio': vidas >= 1, 'coracao-vazio': vidas < 1 }"></div>
+            <div :class="{ 'coracao-cheio': vidas >= 2, 'coracao-vazio': vidas < 2 }"></div>
+            <div :class="{ 'coracao-cheio': vidas >= 3, 'coracao-vazio': vidas < 3 }"></div>
+        </div>
 
         <div class="card">
             <h2>{{ perguntaAtual.id }}. {{ perguntaAtual.pergunta }}</h2>
@@ -20,83 +19,14 @@
         </div>
     </div>
 </template>
-  
+
 <script>
+import perguntasJson from '@/assets/perguntas.json'; // Importa o arquivo JSON
+
 export default {
     data() {
         return {
-            perguntas: [
-                {
-                    id: 1, pergunta: 'Um astronauta trouxe 23 kg de suprimentos e recebeu mais 19 kg de um transporte de carga. Quantos kg de suprimentos ele tem agora?',
-                    alternativa1: '44 kg',
-                    alternativa2: '43 kg',
-                    alternativa3: '45 kg',
-                    resposta: '42 kg'
-                },
-                {
-                    id: 2, pergunta: 'A nave espacial utilizou 45 litros de combustível em uma viagem e, depois, mais 17 litros em outra. Quantos litros de combustível foram utilizados no total?',
-                    alternativa1: '52 litros',
-                    alternativa2: '72 litros',
-                    alternativa3: '42 litros',
-                    resposta: '62 litros'
-                },
-                {
-                    id: 3, pergunta: ' Uma pesquisa espacial precisa de 8 amostras de solo, e cada amostra pesa 7 kg. Qual é o peso total das amostras?',
-                    alternativa1: '54 kg',
-                    alternativa2: '58 kg',
-                    alternativa3: '60 kg',
-                    resposta: '56 kg'
-                },
-                {
-                    id: 4, pergunta: 'Se uma nave precisa de 56 litros de água para uma missão e cada tanque armazena 8 litros, quantos tanques são necessários?',
-                    alternativa1: '5 tanques',
-                    alternativa2: '6 tanques',
-                    alternativa3: '8 tanques',
-                    resposta: '7 tanques'
-                },
-                {
-                    id: 5, pergunta: 'Uma equipe de astronautas recebe 3 pacotes de comida cada dia, e cada pacote contém 5 unidades de ração. Quantas unidades de ração eles recebem em 2 dias?',
-                    alternativa1: '15 unidades',
-                    alternativa2: '20 unidades',
-                    alternativa3: '30 unidades',
-                    resposta: '30 unidades'
-                },
-                {
-                    id: 6, pergunta: 'Um laboratório na nave precisa de (2 + 3) unidades de energia para cada experimento, e eles fazem 4 experimentos por dia. Quantas unidades de energia são necessárias por dia?',
-                    alternativa1: '8 unidades',
-                    alternativa2: '5 unidades',
-                    alternativa3: '12 unidades',
-                    resposta: '20 unidades'
-                },
-                {
-                    id: 7, pergunta: 'Um robô de exploração trabalha por 6 horas, dividindo seu tempo igualmente entre 3 tarefas. Quantas horas ele gasta em cada tarefa?',
-                    alternativa1: '1 hora',
-                    alternativa2: '2 horas',
-                    alternativa3: '3 horas',
-                    resposta: '2 horas'
-                },
-                {
-                    id: 8, pergunta: 'Uma nave espacial viaja a uma velocidade constante e percorre 56.000 km em 2 horas. Qual é a velocidade da nave em km/h?',
-                    alternativa1: '20.000 km/h',
-                    alternativa2: '24.000 km/h',
-                    alternativa3: '23.000 km/h',
-                    resposta: '28.000 km/h'
-                },
-                {
-                    id: 9, pergunta: 'Um astronauta tem uma quantidade de suprimentos representada pela equação 3x + 5 = 17. Quantos suprimentos ele tem?',
-                    alternativa1: '2 unidades',
-                    alternativa2: '3 unidades',
-                    alternativa3: '4 unidades',
-                    resposta: '4 unidades'
-                },
-                {
-                    id: 10, pergunta: 'Um tanque de combustível na nave é representado pela equação 5x - 2 = 28. Quantos litros de combustível o tanque pode conter?',
-                    alternativa1: '3 litros',
-                    alternativa2: '4 litros',
-                    alternativa3: '5 litros',
-                    resposta: '6 litros'
-                }
-            ],
+            perguntas: perguntasJson.perguntas, // Inicializa com dados do JSON
             perguntaAtual: null,
             alternativasEmbaralhadas: [],
             respostaSelecionada: null,
@@ -148,13 +78,12 @@ export default {
             // Lógica para conferir a resposta selecionada
             if (this.respostaSelecionada !== null) {
                 const respostaCorreta = this.alternativasEmbaralhadas.find(alternativa => alternativa.correta);
-                console.log(respostaCorreta)
                 const respostaUsuario = this.alternativasEmbaralhadas[this.respostaSelecionada];
-                console.log(this.alternativasEmbaralhadas[this.respostaSelecionada])
                 if (respostaCorreta.texto === respostaUsuario.texto) {
                     // Resposta correta
                     alert('Resposta correta!');
-                    // Aqui você pode implementar a lógica para adicionar pontuação, etc.
+                    // Implementar a lógica para adicionar pontuação, etc.
+                    this.$router.push(`/mapa`);
                 } else {
                     // Resposta incorreta
                     alert('Resposta incorreta!');

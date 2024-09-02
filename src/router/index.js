@@ -1,9 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import TelaLogin from '@/views/TelaLogin.vue'
-import TelaCadastro from '@/views/TelaCadastro.vue'
+import TelaLoginProfessor from '@/views/TelaLoginProfessor.vue'
+import TelaCadastroProfessor from '@/views/TelaCadastroProfessor.vue'
+import TelaLoginAluno from '@/views/TelaLoginAluno.vue'
+import TelaCadastroAluno from '@/views/TelaCadastroAluno.vue'
 import TelaMapa from '@/views/TelaMapa.vue';
+import TelaMapaJogo2 from '@/views/TelaMapaJogo2.vue';
 import TelaPergunta from '@/views/TelaPergunta.vue'
-import TelaLoginAluno from '@/views/TelaLoginAluno.vue';
+import TelaInicialAluno from '@/views/TelaInicialAluno.vue';
 import TelaInicial from '@/views/TelaInicial.vue'
 import TelaImprimirJogos from '@/views/TelaImprimirJogos.vue';
 import TelaDetalheJogo from '@/views/TelaDetalheJogo.vue';
@@ -13,13 +16,18 @@ const routes = [
   
   {
     path: '/cadastro-professor',
-    name: 'cadastro',
-    component: TelaCadastro, 
+    name: 'cadastro-professor',
+    component: TelaCadastroProfessor, 
   },
   {
     path: '/login-professor',
-    name: 'login',
-    component: TelaLogin, 
+    name: 'login-professor',
+    component: TelaLoginProfessor, 
+  },
+  {
+    path: '/cadastro-aluno',
+    name: 'cadastro-aluno',
+    component: TelaCadastroAluno, 
   },
   {
     path: '/login-aluno',
@@ -27,13 +35,23 @@ const routes = [
     component: TelaLoginAluno, 
   },
   {
+    path: '/inicio-aluno',
+    name: 'inicio-aluno',
+    component: TelaInicialAluno, 
+  },
+  {
     path: '/',
-    redirect: '/login-aluno' 
+    redirect: '/inicio-aluno' 
   }, 
   {
     path: '/mapa',
     name: 'mapa',
     component: TelaMapa, 
+  },
+  {
+    path: '/jogo2/mapa',
+    name: 'mapa-jogo2',
+    component: TelaMapaJogo2, 
   },
   {
     path: '/pergunta/:id',

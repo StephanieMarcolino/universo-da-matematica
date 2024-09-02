@@ -1,5 +1,8 @@
 <template>
   <div class="vh-100 vw-100 background">
+    <div class="score">
+      Pontuação: {{ score }}
+    </div>
     <div class="level-map" ref="levelMap">
       <svg class="vh-100" ref="svgMap">
         <!-- Caminho Pontilhado -->
@@ -25,16 +28,21 @@
 
         <!-- Botões dos Níveis com Bootstrap -->
         <g v-for="level in levels" :key="level.id">
-          <foreignObject :x="level.x - 25" :y="level.y - 25" width="55" height="55">
-            <div class="d-flex justify-content-center align-items-center rounded-circle">
+          <foreignObject :x="level.x - 25" :y="level.y - 25" width="55" height="105">
+              <!-- Astronauta acima do botão -->
+              <img 
+                v-if="level.id === currentLevel" 
+                src="../assets/astronaut.png"
+                class="astronaut-icon" 
+                alt="Astronauta" 
+              />
               <button
                 type="button"
-                class="btn btn-secondary level-button rounded-circle"
+                :class="getLevelClass(level.id)"
                 @click="selectLevel(level.id)"
               >
                 {{ level.id }}
               </button>
-            </div>
           </foreignObject>
         </g>
       </svg>
@@ -47,6 +55,9 @@ export default {
   name: 'LevelMap',
   data() {
     return {
+      score: 100, // Exemplo de pontuação
+      currentLevel: 3, // Exemplo: o jogador está no nível 3
+      completedLevels: [1, 2], // Exemplo: níveis 1 e 2 já foram concluídos
       levels: [
         { id: 1, x: 50, y: 200 },
         { id: 2, x: 200, y: 250 },
@@ -90,6 +101,15 @@ export default {
     onMouseLeave() {
       this.isDragging = false;
       this.$refs.levelMap.style.cursor = 'grab'; // Restaura o cursor
+    },
+    getLevelClass(levelId) {
+      if (levelId === this.currentLevel) {
+        return 'btn btn-primary level-button rounded-circle'; // Tom de azul
+      } else if (this.completedLevels.includes(levelId)) {
+        return 'btn btn-light level-button rounded-circle text-primary'; // Fundo branco e escrita em azul
+      } else {
+        return 'btn btn-secondary level-button rounded-circle'; // Cinza para níveis não completos
+      }
     },
   },
   mounted() {
@@ -141,11 +161,31 @@ svg {
   min-width: 1400px; /* Garantir que a largura mínima do SVG seja suficiente */
 }
 
+.score {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  z-index: 10;
+}
+
+.astronaut-icon {
+  position: absolute;
+  top: -50px; /* Posiciona o astronauta acima do botão */
+  width: 40px;
+  height: 40px;
+  z-index: 1; /* Certifique-se de que a imagem esteja sobre o botão */
+}
+
 .level-button {
-  width: 100%;
-  height: 100%;
+  position: relative;
+  z-index: 0; /* Botão estará atrás da imagem */
+  width: 50px;
+  height: 50px;
   font-size: 1.2rem;
-  border-radius: 1;
+  border-radius: 50%;
   font-weight: bold;
 }
 
@@ -153,11 +193,6 @@ svg {
   background-color: white;
   border-color: #0097fc;
   color: #051a77;
-  font-weight: bold;
-}
-
-.level-text {
-  fill: #fff;
   font-weight: bold;
 }
 </style>
