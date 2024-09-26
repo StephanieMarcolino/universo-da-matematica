@@ -16,10 +16,26 @@
             </div>
 
             <button type="button" class="btn btn-outline-primary" @click="conferir">Ok</button>
-            <div v-if="mensagem" class="mensagem">{{ mensagem }}</div>
+        </div>
+
+        <!-- Popup modal -->
+        <div v-if="exibirPopup" class="popup-container">
+            <div class="popup-content">
+                 <!-- Ícone de acordo com a mensagem -->
+                 <div class="popup-icon">
+                    <img v-if="vidas === 3 && redirecionarParaMapa" src="@/assets/meme-3vidas.png" alt="Incrível" />
+                    <img v-if="vidas === 2 && !redirecionarParaMapa" src="@/assets/meme-2vidas.png" alt="Bom" />
+                    <img v-if="vidas === 1 && !redirecionarParaMapa" src="@/assets/meme-1vida.png" alt="Ufa" />
+                    <img v-if="vidas === 0" src="@/assets/meme-0vida.png" alt="Game Over" />
+                </div>
+
+                <h2 class="popup-message">{{ mensagem }}</h2>
+                <button class="btn btn-primary popup-close" @click="fecharPopup">Fechar</button>
+            </div>
         </div>
     </div>
 </template>
+
 
 <script>
 import perguntasJson from '@/assets/perguntas.json'; // Importa o arquivo JSON
@@ -27,12 +43,14 @@ import perguntasJson from '@/assets/perguntas.json'; // Importa o arquivo JSON
 export default {
     data() {
         return {
-            perguntas: perguntasJson.perguntas, // Inicializa com dados do JSON
+            perguntas: perguntasJson.perguntas, 
             perguntaAtual: null,
             alternativasEmbaralhadas: [],
             respostaSelecionada: null,
             vidas: 3,
-            mensagem: '', // Adiciona uma propriedade para mensagens
+            mensagem: '',
+            exibirPopup: false,
+            redirecionarParaMapa: false
         };
     },
     mounted() {
@@ -77,29 +95,42 @@ export default {
             this.respostaSelecionada = index; // Define a resposta selecionada ao clicar na alternativa
         },
         conferir() {
-            // Lógica para conferir a resposta selecionada
             if (this.respostaSelecionada !== null) {
                 const respostaCorreta = this.alternativasEmbaralhadas.find(alternativa => alternativa.correta);
                 const respostaUsuario = this.alternativasEmbaralhadas[this.respostaSelecionada];
                 if (respostaCorreta.texto === respostaUsuario.texto) {
-                    // Resposta correta
-                    this.mensagem = 'Resposta correta! Ótimo trabalho!'; // Mensagem de sucesso
-                    // Implementar a lógica para adicionar pontuação, etc. 
-                    this.$router.push(`/mapa`);
+                    this.redirecionarParaMapa = true;
+                    if (this.vidas === 3) {
+                        this.mensagem = 'Incrível! Você acertou de primeira, excelente trabalho!';
+                    } else if (this.vidas === 2) {
+                        this.mensagem = 'Boa! Acertou na segunda tentativa, continue assim!';
+                    } else if (this.vidas === 1) {
+                        this.mensagem = 'Ufa! Você acertou no último momento, parabéns pela persistência!';
+                    }
                 } else {
-                    // Resposta incorreta
-                    this.mensagem = 'Resposta incorreta. Tente novamente!'; // Mensagem de erro
                     this.vidas--;
-
-                    // Lógica para verificar se ainda há vidas restantes
-                    if (this.vidas <= 0) {
-                        this.mensagem = 'Você perdeu todas as vidas. Jogo terminado.';
-                        // Implementar lógica para terminar o jogo ou reiniciar
+                    this.redirecionarParaMapa = false;
+                    if (this.vidas > 0) {
+                        if (this.vidas === 2) {
+                            this.mensagem = 'Não desista! Ainda tem mais duas chances!';
+                        } else if (this.vidas === 1) {
+                            this.mensagem = 'Última tentativa! Pense com cuidado!';
+                        }
+                    } else {
+                        this.mensagem = 'Você perdeu todas as vidas. Não desanime, tente novamente!';
                     }
                 }
+                this.exibirPopup = true; 
             } else {
-                // Caso nenhuma resposta seja selecionada
                 this.mensagem = 'Por favor, selecione uma resposta!';
+                this.exibirPopup = true; // Exibe o popup
+            }
+        },
+        fecharPopup() {
+            this.exibirPopup = false; 
+            if (this.redirecionarParaMapa) {
+                // Se a resposta foi correta, redireciona para o mapa
+                this.$router.push(`/mapa`);
             }
         }
     }
@@ -209,6 +240,60 @@ export default {
     -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="48px" height="48px"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>');
     mask-size: cover;
 }
+
+.popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background: #2e2e2e;
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    max-width: 400px; /* Define o tamanho máximo do popup */
+    width: 90%; /* Ajusta a largura para caber bem em diferentes tamanhos de tela */
+}
+  
+  .popup-message {
+    margin-bottom: 20px;
+    font-size: 1rem;
+  }
+  
+  .popup-close {
+    background: linear-gradient(90deg, #1A6DFF, #C822FF);
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  }
+  
+  .popup-close:hover {
+    opacity: 0.5;
+  }
+
+  .popup-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.popup-icon img {
+    width: 100px; /* Tamanho ajustável */
+    height: 100px;
+}
+
 
 </style>
   
