@@ -1,16 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import TelaLoginProfessor from '@/views/TelaLoginProfessor.vue'
-import TelaCadastroProfessor from '@/views/TelaCadastroProfessor.vue'
-import TelaLoginAluno from '@/views/TelaLoginAluno.vue'
-import TelaCadastroAluno from '@/views/TelaCadastroAluno.vue'
-import TelaMapa from '@/views/TelaMapa.vue';
-import TelaMapaJogo2 from '@/views/TelaMapaJogo2.vue';
-import TelaPergunta from '@/views/TelaPergunta.vue'
+import TelaLoginProfessor from '@/views/LoginProfessor.vue'
+import TelaCadastroProfessor from '@/views/CadastroProfessor.vue'
+import TelaLoginAluno from '@/views/LoginAluno.vue'
+import TelaCadastroAluno from '@/views/CadastroAluno.vue'
+import TelaMapa from '@/views/Mapa.vue';
+import TelaMapaJogo2 from '@/views/MapaJogo2.vue';
+import TelaPergunta from '@/views/TelaPerguntas.vue'
 import TelaInicialAluno from '@/views/TelaInicialAluno.vue';
 import TelaInicial from '@/views/TelaInicial.vue'
-import TelaImprimirJogos from '@/views/TelaImprimirJogos.vue';
-import TelaDetalheJogo from '@/views/TelaDetalheJogo.vue';
-import TelaCadastroTurma from '@/views/TelaCadastroTurma.vue';
+import TelaImprimirJogos from '@/views/ImprimirJogos.vue';
+import TelaDetalheJogo from '@/views/DetalheJogo.vue';
+import TelaCadastroTurma from '@/views/CadastroTurma.vue';
+import VisualizarTurmas from '@/views/VisualizarTurmas.vue';
+import DetalhesTurma from '@/views/DetalhesTurma.vue';
+import CadastrarJogo from '@/views/CadastrarJogo.vue';
+import CadastrarPerguntas from '@/views/CadastrarPerguntas.vue';
 
 const routes = [
   
@@ -79,6 +83,22 @@ const routes = [
     path: '/cadastro-turma',
     name: 'cadastro-turma',
     component: TelaCadastroTurma, 
+  },
+  { path: '/turmas', 
+    name: 'VisualizarTurmas', 
+    component: VisualizarTurmas 
+  },
+  { path: '/turmas/:turmaId', 
+    name: 'DetalhesTurma', 
+    component: DetalhesTurma 
+  },
+  { path: '/cadastrar-perguntas', 
+    name: 'CadastrarPerguntas', 
+    component: CadastrarPerguntas 
+  },
+  { path: '/cadastrar-jogo', 
+    name: 'CadastrarJogo', 
+    component: CadastrarJogo 
   },
 ];
 

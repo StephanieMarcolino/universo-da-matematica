@@ -16,6 +16,7 @@
             </div>
 
             <button type="button" class="btn btn-outline-primary" @click="conferir">Ok</button>
+            <div v-if="mensagem" class="mensagem">{{ mensagem }}</div>
         </div>
     </div>
 </template>
@@ -31,6 +32,7 @@ export default {
             alternativasEmbaralhadas: [],
             respostaSelecionada: null,
             vidas: 3,
+            mensagem: '', // Adiciona uma propriedade para mensagens
         };
     },
     mounted() {
@@ -81,28 +83,29 @@ export default {
                 const respostaUsuario = this.alternativasEmbaralhadas[this.respostaSelecionada];
                 if (respostaCorreta.texto === respostaUsuario.texto) {
                     // Resposta correta
-                    alert('Resposta correta!');
-                    // Implementar a lógica para adicionar pontuação, etc.
+                    this.mensagem = 'Resposta correta! Ótimo trabalho!'; // Mensagem de sucesso
+                    // Implementar a lógica para adicionar pontuação, etc. 
                     this.$router.push(`/mapa`);
                 } else {
                     // Resposta incorreta
-                    alert('Resposta incorreta!');
+                    this.mensagem = 'Resposta incorreta. Tente novamente!'; // Mensagem de erro
                     this.vidas--;
-                }
 
-                //   // Avançar para a próxima pergunta, por exemplo:
-                //   const proximoLevelId = this.perguntaAtual.id + 1;
-                //   this.$router.push(`/pergunta/${proximoLevelId}`);
-                //   this.selecionarPergunta(proximoLevelId); // Ou alguma lógica para ir para a próxima pergunta
+                    // Lógica para verificar se ainda há vidas restantes
+                    if (this.vidas <= 0) {
+                        this.mensagem = 'Você perdeu todas as vidas. Jogo terminado.';
+                        // Implementar lógica para terminar o jogo ou reiniciar
+                    }
+                }
             } else {
                 // Caso nenhuma resposta seja selecionada
-                alert('Por favor, selecione uma resposta!');
+                this.mensagem = 'Por favor, selecione uma resposta!';
             }
         }
     }
 };
 </script>
-  
+
 <style scoped>
 .background {
     display: flex;
@@ -123,6 +126,7 @@ export default {
     width: 60%;
     height: auto;
     background-color: rgba(255, 255, 255, 0.8);
+    position: relative; /* Adiciona posição relativa para a mensagem */
 }
 
 .card-alternativa {
@@ -184,7 +188,6 @@ export default {
     display: flex;
     flex-direction: row;
 }
-
 .coracao-cheio {
     width: 30px;
     height: 30px;

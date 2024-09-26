@@ -12,13 +12,16 @@
                 <a class="nav-link active" aria-current="page" href="/inicio">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Visualizar Turmas</a>
+                <a class="nav-link" href="/turmas">Visualizar Turmas</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/cadastro-turma">Criar Turma</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Criar Jogo</a>
+                <a class="nav-link" href="/cadastrar-jogo">Criar Jogo</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/cadastrar-perguntas">Criar Questões</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/imprimir-jogos">Imprimir Jogos</a>
@@ -111,7 +114,7 @@
   }
   
   .bg-universe {
-    background: linear-gradient(90deg, rgba(10, 10, 50, 1) 0%, rgba(0, 0, 100, 1) 100%);
+    background: linear-gradient(90deg, rgba(10, 10, 50, 1) 0%, #000064 100%);
   }
   </style>
   

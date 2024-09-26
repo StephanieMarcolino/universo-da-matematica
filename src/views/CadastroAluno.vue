@@ -1,7 +1,9 @@
 <template>
     <div class="vh-100 vw-100 cadastro-container">
+        <div class="content-center">
+            <h2 class="text-center mb-5 cadastro-text">Faça o Cadastro</h2>
             <div sm="7" class="cadastro-form">
-                <h2 class="text-center mb-5 title-cadastro">Faça o cadastro</h2>
+                
                 <form @submit.prevent="submitForm">
                     <div class="mb-3">
                         <div class="input-group">
@@ -34,6 +36,7 @@
                     </div>
                 </form>
             </div>
+        </div>
         </div>
 </template>
 
@@ -89,4 +92,16 @@ export default {
     color: white;
 }
 
+.content-center {
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.cadastro-text {
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
 </style>

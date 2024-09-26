@@ -1,11 +1,13 @@
 <template>
     <div class="vh-100 vw-100 login-container">
-        <div class="login-form">
-            <h2 class="text-center mb-4 title-login">Login</h2>
+        
+        <div class="content-center">
+            <h2 class="text-center mb-4 login-text">Faça o Login</h2>
+            <div class="login-form">
             <form @submit.prevent="submitForm">
                 <div class="mb-3 input-group">
-                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                    <input v-model="nome" type="text" class="form-control" id="nome" placeholder="Nome de Usuário" required>
+                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    <input v-model="email" type="email" class="form-control" id="email" placeholder="Email" required>
                 </div>
                 <div class="mb-3 input-group">
                     <span class="input-group-text"><i class="fas fa-lock"></i></span>
@@ -22,6 +24,7 @@
                 </div>
             </form>
         </div>
+        </div>
     </div>
 </template>
   
@@ -29,17 +32,17 @@
 export default {
     data() {
         return {
-            nome: '',
+            email: '',
             password: '',
         };
     },
     methods: {
         async login() {
             alert('Login feito com sucesso');
-            this.$router.push('/jogo2/mapa');
+            this.$router.push('/inicio');
         },
         registrar() {
-            this.$router.push('/cadastro-aluno');
+            this.$router.push('/cadastro-professor');
         }
     }
 };
@@ -68,6 +71,12 @@ export default {
     width: 100%;
 }
 
+.content-center {
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
 .btn-primary {
     background: linear-gradient(90deg, rgba(10, 10, 50, 1) 0%, rgba(0, 0, 100, 1) 100%);
 }
@@ -76,5 +85,12 @@ export default {
     background-color: #0097fc;
     border-color: #0097fc;
     color: white;
+}
+
+.login-text {
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
 }
 </style>

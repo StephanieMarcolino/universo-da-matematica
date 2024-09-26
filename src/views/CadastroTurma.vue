@@ -41,7 +41,7 @@ export default {
                 nome: '',
                 escola: '',
                 serie: '',
-                ano: null,
+                ano: '',
             },
             availableYears: this.getAvailableYears(), // Obter anos disponíveis
         };
@@ -73,7 +73,7 @@ export default {
 
 <style scoped>
 .cadastro-turma {
-    max-width: 400px;
+    max-width: 600px;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;
@@ -105,7 +105,7 @@ select {
 button {
     width: 100%;
     padding: 10px;
-    background-color: #007bff;
+    background-color: #000064;
     color: white;
     border: none;
     border-radius: 5px;

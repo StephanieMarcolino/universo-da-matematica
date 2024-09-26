@@ -19,13 +19,13 @@
 </template>
 
 <script>
-import TelaMapa from './views/TelaMapa.vue'
-import TelaMapaJogo2 from './views/TelaMapaJogo2.vue'
-import TelaLoginProfessor from '@/views/TelaLoginProfessor.vue'
-import TelaCadastroProfessor from '@/views/TelaCadastroAluno.vue'
-import TelaLoginAluno from '@/views/TelaLoginAluno.vue'
-import TelaCadastroAluno from '@/views/TelaCadastroAluno.vue'
-import TelaPergunta from '@/views/TelaPergunta.vue'
+import TelaMapa from './views/Mapa.vue'
+import TelaMapaJogo2 from './views/MapaJogo2.vue'
+import TelaLoginProfessor from '@/views/LoginProfessor.vue'
+import TelaCadastroProfessor from '@/views/CadastroAluno.vue'
+import TelaLoginAluno from '@/views/LoginAluno.vue'
+import TelaCadastroAluno from '@/views/CadastroAluno.vue'
+import TelaPergunta from '@/views/TelaPerguntas.vue'
 import TelaInicialAluno from '@/views/TelaInicialAluno.vue'
 import NavbarComponent from '@/components/NavBarComponent.vue'
 
