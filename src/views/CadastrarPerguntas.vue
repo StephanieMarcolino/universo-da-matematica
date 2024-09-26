@@ -1,33 +1,37 @@
 <template>
-    <div class="criar-pergunta">
-      <h2>Criar Nova Pergunta</h2>
-      <form @submit.prevent="criarPergunta">
-        <div class="form-group">
-          <label for="descricao">Descrição da Pergunta</label>
-          <textarea id="descricao" v-model="pergunta.descricao" required></textarea>
-        </div>
-        <div class="form-group">
-          <label>Alternativas</label>
-          <div v-for="(alternativa, index) in pergunta.alternativas" :key="index" class="alternativa-group">
-            <input type="text" v-model="alternativa.texto" placeholder="Alternativa {{ index + 1 }}" required />
-            <label>
-              <input type="radio" v-model="pergunta.correta" :value="index" /> Correta
+  <div class="criar-pergunta">
+    <h2>Criar Nova Pergunta</h2>
+    <form @submit.prevent="criarPergunta">
+      <div class="form-group">
+        <label for="descricao">Descrição da Pergunta</label>
+        <textarea id="descricao" v-model="pergunta.descricao" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Alternativas</label>
+        <div v-for="(alternativa, index) in pergunta.alternativas" :key="index" class="alternativa-group">
+          <input type="text" v-model="alternativa.texto" :placeholder="`Alternativa ${index + 1}`" required />
+          <div class="d-flex align-items-center">
+            <input type="radio" name="flexRadioDefault" id="flexRadioDefault{{ index }}" v-model="pergunta.correta" :value="index">
+            <label class="form-check-label ms-2" :for="'flexRadioDefault' + index">
+              Correta
             </label>
           </div>
         </div>
-        <div class="form-group">
-          <label for="complexidade">Complexidade</label>
-          <select id="complexidade" v-model="pergunta.complexidade" required>
-            <option value="" disabled selected>Selecione</option>
-            <option value="fácil">Fácil</option>
-            <option value="médio">Médio</option>
-            <option value="difícil">Difícil</option>
-          </select>
-        </div>
-        <button type="submit">Salvar Pergunta</button>
-      </form>
-    </div>
-  </template>
+      </div>
+      <div class="form-group">
+        <label for="complexidade">Complexidade</label>
+        <select id="complexidade" v-model="pergunta.complexidade" required>
+          <option value="" disabled selected>Selecione</option>
+          <option value="fácil">Fácil</option>
+          <option value="médio">Médio</option>
+          <option value="difícil">Difícil</option>
+        </select>
+      </div>
+      <button type="submit">Salvar Pergunta</button>
+    </form>
+  </div>
+</template>
+
   
   <script>
   export default {
@@ -100,5 +104,16 @@
   button:hover {
     background-color: #0056b3;
   }
+
+  .alternativa-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px; /* Adiciona um espaço entre as alternativas */
+}
+
+.form-check-label {
+  margin-left: 8px; /* Ajuste da margem para separar o texto do botão de rádio */
+}
+
   </style>
   
