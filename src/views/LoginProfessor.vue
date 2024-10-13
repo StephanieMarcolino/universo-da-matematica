@@ -38,7 +38,6 @@ export default {
     },
     methods: {
         async login() {
-            alert('Login feito com sucesso');
             this.$router.push('/inicio');
         },
         registrar() {
