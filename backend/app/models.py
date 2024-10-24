@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Professor(models.Model):
     nome = models.CharField('nome', max_length=255, null=True, blank=False)
     email = models.CharField('email', max_length=255, null=True, blank=False)

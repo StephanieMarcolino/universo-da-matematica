@@ -10,19 +10,19 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
 
-
 class ProfessorMenuView(APIView):
     permission_classes = [AllowAny]  # Permite que qualquer um acesse essa view
 
     def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
+        email = request.data.get('email')
+        nome = request.data.get('nome')
+        senha = request.data.get('senha')
 
-        user = authenticate(username=username, password=password)
+        user = authenticate(email=email, senha=senha)
 
         if user is not None:
             # Se o login for bem-sucedido, você pode retornar um token ou alguma informação do usuário
-            return Response({'message': 'Login bem-sucedido', 'username': user.username}, status=status.HTTP_200_OK)
+            return Response({'message': 'Login bem-sucedido', 'nome': user.nome}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Credenciais inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -257,5 +257,3 @@ def get_questoes_by_jogo(request, jogo_id):
     except Jogo.DoesNotExist:
         return Response({"error": "Jogo não encontrado"}, status=status.HTTP_404_NOT_FOUND)
     
-
-

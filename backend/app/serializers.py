@@ -33,8 +33,10 @@ class QuestaoSerializer(serializers.ModelSerializer):
 class AlunoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Aluno
-        fields ="__all__"
-           
+        fields = ['id', 'nome', 'pontuacao', 'progresso'] 
+        extra_kwargs = {
+            'nome': {'required': False},  # Torne o campo 'nome' não obrigatório
+        }
 
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
