@@ -25,6 +25,11 @@ class QuestaoSerializer(serializers.ModelSerializer):
         fields ="__all__" 
         #fields = ('id', 'descricao', 'classificacao')  
 
+class QuestaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Questao
+        fields = '__all__'
+        
 class AlunoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Aluno
@@ -49,4 +54,6 @@ class JogoTurmaSerializer(serializers.ModelSerializer):
 class TurmaAlunoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Turma_Aluno
-        fields = ['turma', 'aluno']          
+        fields = ['turma', 'aluno'] 
+        
+                 

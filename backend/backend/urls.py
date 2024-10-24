@@ -36,6 +36,7 @@ from app.views import (
     QuestaoViewSet,
     QuestaoListCreateAPIView,
     QuestaoRetrieveUpdateDestroyAPIView, 
+    QuestaoFacilView,
     AlunoViewSet,
     AlunoListCreateAPIView,
     AlunoRetrieveUpdateDestroyAPIView,
@@ -53,7 +54,8 @@ router = routers.DefaultRouter()
 router.register(r'professores', ProfessorViewSet)
 
 urlpatterns = [
-    path('',include(router.urls)),
+    path('/',include(router.urls)),
+
 
     #tokens
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -84,7 +86,8 @@ urlpatterns = [
     path('questoes/vizualizar/', QuestaoViewSet.as_view({'get': 'list'})),
     path('questoes/cadastrar/', QuestaoListCreateAPIView.as_view(), name='questao-list-create'),
     path('questoes/<int:pk>/', QuestaoRetrieveUpdateDestroyAPIView.as_view(), name='questao-detail'),
-
+    path('questoes/facil/', QuestaoFacilView.as_view(), name='questoes_facil'), 
+    
     # Rota para categoria
     path('categoria/vizualizar/', CategoriaViewSet.as_view({'get': 'list'})),
     path('categoria/cadastrar/', CategoriaListCreateAPIView.as_view(), name='categoria-list-create'),

@@ -45,7 +45,7 @@ class Questao_Jogo(models.Model):
 
 class Aluno(models.Model):
     nome = models.CharField('nome', max_length=255, null=False, blank=False)
-    pontuacao = models.IntegerField(default=0) 
+    pontuacao = models.IntegerField(default=1) 
     progresso = models.IntegerField(default=0) 
 
 class Turma_Aluno(models.Model):

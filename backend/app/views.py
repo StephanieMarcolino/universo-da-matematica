@@ -127,13 +127,14 @@ class QuestaoViewSet(viewsets.ModelViewSet):
 
 class QuestaoListCreateAPIView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
     queryset = Questao.objects.all()
-    serializer_class = QuestaoSerializer 
+    serializer_class = QuestaoSerializer
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs) 
+    
 
 class QuestaoRetrieveUpdateDestroyAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin,
                                            mixins.UpdateModelMixin, mixins.DestroyModelMixin):
@@ -149,16 +150,18 @@ class QuestaoRetrieveUpdateDestroyAPIView(generics.GenericAPIView, mixins.Retrie
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
     
-class QuestaoListCreateAPIView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
-    queryset = Questao.objects.all()
-    serializer_class = QuestaoSerializer
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs) 
     
+class QuestaoFacilView(APIView):
+    def get(self, request, *args, **kwargs):
+        # Filtrar questões com a classificação 'fácil'
+        questoes_facil = Questao.objects.filter(classificacao='Fácil')
+
+        # Serializar as questões
+        serializer = QuestaoSerializer(questoes_facil, many=True)
+        
+        # Retornar as questões
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
 class AlunoViewSet(viewsets.ModelViewSet):
     queryset = Aluno.objects.all() 
     serializer_class = AlunoSerializer 
@@ -180,6 +183,8 @@ class AlunoRetrieveUpdateDestroyAPIView(generics.GenericAPIView,mixins.RetrieveM
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs) 
     
+    
+    
 class AlunoListCreateAPIView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
     queryset = Aluno.objects.all()
     serializer_class = AlunoSerializer 
@@ -191,7 +196,7 @@ class AlunoListCreateAPIView(generics.GenericAPIView, mixins.ListModelMixin, mix
     #Criar
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs) 
-    
+
 
 class CategoriaListCreateAPIView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
     queryset = Categoria.objects.all()
@@ -219,6 +224,18 @@ class TurmaAlunoViewSet(viewsets.ModelViewSet):
     queryset = Turma_Aluno.objects.all()
     serializer_class = TurmaAlunoSerializer
 
+class TurmaAlunoListCreateAPIView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
+    queryset = Turma_Aluno.objects.all()
+    serializer_class = TurmaAlunoSerializer 
+
+    #Listar
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    #Criar
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs) 
+
 # Rota para buscar jogo pelo pin
 @api_view(['GET'])
 def get_jogo_by_pin(request, pin):
@@ -239,3 +256,6 @@ def get_questoes_by_jogo(request, jogo_id):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Jogo.DoesNotExist:
         return Response({"error": "Jogo não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+    
+
+
