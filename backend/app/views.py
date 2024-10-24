@@ -3,8 +3,8 @@ from rest_framework import generics, mixins, viewsets
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from app.models import Professor, Turma, Jogo, Questao, Aluno, Categoria, Questao_Jogo, Jogo_Turma
-from .serializers import ProfessorSerializer, TurmaSerializer, JogoSerializer, QuestaoSerializer, AlunoSerializer, CategoriaSerializer, QuestaoJogoSerializer, JogoTurmaSerializer
+from app.models import Professor, Turma, Jogo, Questao, Aluno, Categoria, Questao_Jogo, Jogo_Turma, Turma_Aluno
+from .serializers import ProfessorSerializer, TurmaSerializer, JogoSerializer, QuestaoSerializer, AlunoSerializer, CategoriaSerializer, QuestaoJogoSerializer, JogoTurmaSerializer, TurmaAlunoSerializer
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -205,11 +205,15 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all() 
     serializer_class = CategoriaSerializer
 
-class QuestaoJogoCreateView(generics.CreateAPIView):
+class QuestaoJogoViewSet(viewsets.ModelViewSet):
     queryset = Questao_Jogo.objects.all()
     serializer_class = QuestaoJogoSerializer
 
-class JogoTurmaCreateView(generics.CreateAPIView):
+class JogoTurmaViewSet(viewsets.ModelViewSet):
     queryset = Jogo_Turma.objects.all()
     serializer_class = JogoTurmaSerializer
+
+class TurmaAlunoViewSet(viewsets.ModelViewSet):
+    queryset = Turma_Aluno.objects.all()
+    serializer_class = TurmaAlunoSerializer
 

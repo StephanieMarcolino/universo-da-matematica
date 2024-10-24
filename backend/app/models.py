@@ -34,10 +34,10 @@ class Questao(models.Model):
     descricao = models.CharField('descricao',  max_length=255, null=False, blank=False)
     classificacao = models.CharField('classificacao', max_length=45, null=False, blank=False)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
-    alternativa1 = models.CharField('alternativa1', max_length=100, null=True)
-    alternativa2 = models.CharField('alternativa2', max_length=100, null=True)
-    alternativa3 = models.CharField('alternativa3', max_length=100, null=True)
-    resposta = models.CharField('resposta', max_length=100, null = True)
+    alternativa1 = models.CharField('alternativa1', max_length=100, null=False)
+    alternativa2 = models.CharField('alternativa2', max_length=100, null=False)
+    alternativa3 = models.CharField('alternativa3', max_length=100, null=False)
+    resposta = models.CharField('resposta', max_length=100, null = False)
     
 class Questao_Jogo(models.Model):
     questao = models.ForeignKey(Questao, on_delete=models.CASCADE)
@@ -47,3 +47,8 @@ class Aluno(models.Model):
     nome = models.CharField('nome', max_length=255, null=False, blank=False)
     pontuacao = models.IntegerField(default=0) 
     progresso = models.IntegerField(default=0) 
+
+class Turma_Aluno(models.Model):
+    turma = models.ForeignKey(Turma, on_delete=models.CASCADE)
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
+    

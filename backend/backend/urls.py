@@ -41,8 +41,9 @@ from app.views import (
     AlunoRetrieveUpdateDestroyAPIView,
     CategoriaViewSet,
     CategoriaListCreateAPIView,
-    QuestaoJogoCreateView,
-    JogoTurmaCreateView,
+    QuestaoJogoViewSet,
+    JogoTurmaViewSet,
+    TurmaAlunoViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -86,9 +87,11 @@ urlpatterns = [
     path('categoria/cadastrar/', CategoriaListCreateAPIView.as_view(), name='categoria-list-create'),
 
     # Rotas para questao-jogo
-    path('questao-jogo/cadastrar/', QuestaoJogoCreateView.as_view(), name='questao-jogo-create'),
+    path('questao-jogo/vizualizar/', QuestaoJogoViewSet.as_view({'get': 'list'})),
 
     # Rotas para jogo-turma
-    path('jogo-turma/cadastrar/', JogoTurmaCreateView.as_view(), name='jogo-turma-create'),
+    path('jogo-turma/vizualizar/', JogoTurmaViewSet.as_view({'get': 'list'})),
+
+    path('turma-aluno/vizualizar/', TurmaAlunoViewSet.as_view({'get': 'list'})),
 
 ]
