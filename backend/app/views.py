@@ -15,14 +15,12 @@ class ProfessorMenuView(APIView):
 
     def post(self, request):
         email = request.data.get('email')
-        nome = request.data.get('nome')
-        senha = request.data.get('senha')
+        password = request.data.get('password')
 
-        user = authenticate(email=email, senha=senha)
+        user = authenticate(email=email, password=password)
 
         if user is not None:
-            # Se o login for bem-sucedido, você pode retornar um token ou alguma informação do usuário
-            return Response({'message': 'Login bem-sucedido', 'nome': user.nome}, status=status.HTTP_200_OK)
+            return Response({'message': 'Login bem-sucedido'}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Credenciais inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
 
