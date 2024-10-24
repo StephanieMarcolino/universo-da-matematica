@@ -45,6 +45,7 @@ from app.views import (
     QuestaoJogoViewSet,
     JogoTurmaViewSet,
     TurmaAlunoViewSet,
+    TurmaAlunoListCreateAPIView,
     get_jogo_by_pin,
     get_questoes_by_jogo,
     
@@ -87,7 +88,7 @@ urlpatterns = [
     path('questoes/cadastrar/', QuestaoListCreateAPIView.as_view(), name='questao-list-create'),
     path('questoes/<int:pk>/', QuestaoRetrieveUpdateDestroyAPIView.as_view(), name='questao-detail'),
     path('questoes/facil/', QuestaoFacilView.as_view(), name='questoes_facil'), 
-    
+
     # Rota para categoria
     path('categoria/vizualizar/', CategoriaViewSet.as_view({'get': 'list'})),
     path('categoria/cadastrar/', CategoriaListCreateAPIView.as_view(), name='categoria-list-create'),
@@ -100,6 +101,7 @@ urlpatterns = [
 
     # Rotas para turma-aluno
     path('turma-aluno/vizualizar/', TurmaAlunoViewSet.as_view({'get': 'list'})),
+    path('turma-aluno/cadastrar/', TurmaAlunoListCreateAPIView.as_view(), name='turma-aluno-list-create'),
 
     # Rotas para pegar um jogo pelo pin
     path('jogo/<str:pin>/', get_jogo_by_pin, name='get_jogo_by_pin'),
