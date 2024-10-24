@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
+# porta do front
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",  
 ]

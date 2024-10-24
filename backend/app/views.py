@@ -8,6 +8,8 @@ from .serializers import ProfessorSerializer, TurmaSerializer, JogoSerializer, Q
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from rest_framework.decorators import api_view
+
 
 class ProfessorMenuView(APIView):
     permission_classes = [AllowAny]  # Permite que qualquer um acesse essa view
@@ -217,3 +219,23 @@ class TurmaAlunoViewSet(viewsets.ModelViewSet):
     queryset = Turma_Aluno.objects.all()
     serializer_class = TurmaAlunoSerializer
 
+# Rota para buscar jogo pelo pin
+@api_view(['GET'])
+def get_jogo_by_pin(request, pin):
+    try:
+        jogo = Jogo.objects.get(pin=pin)
+        serializer = JogoSerializer(jogo)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Jogo.DoesNotExist:
+        return Response({"error": "Jogo não encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+# Rota para listar questões de um jogo
+@api_view(['GET'])
+def get_questoes_by_jogo(request, jogo_id):
+    try:
+        questoes_jogo = Questao_Jogo.objects.filter(jogo__id=jogo_id)
+        questoes = [qj.questao for qj in questoes_jogo]
+        serializer = QuestaoSerializer(questoes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Jogo.DoesNotExist:
+        return Response({"error": "Jogo não encontrado"}, status=status.HTTP_404_NOT_FOUND)

@@ -44,6 +44,9 @@ from app.views import (
     QuestaoJogoViewSet,
     JogoTurmaViewSet,
     TurmaAlunoViewSet,
+    get_jogo_by_pin,
+    get_questoes_by_jogo,
+    
 )
 
 router = routers.DefaultRouter()
@@ -92,6 +95,13 @@ urlpatterns = [
     # Rotas para jogo-turma
     path('jogo-turma/vizualizar/', JogoTurmaViewSet.as_view({'get': 'list'})),
 
+    # Rotas para turma-aluno
     path('turma-aluno/vizualizar/', TurmaAlunoViewSet.as_view({'get': 'list'})),
+
+    # Rotas para pegar um jogo pelo pin
+    path('jogo/<str:pin>/', get_jogo_by_pin, name='get_jogo_by_pin'),
+
+    # Rotas para pegar questçoes de um jogo
+    path('jogo/<int:jogo_id>/questoes/', get_questoes_by_jogo, name='get_questoes_by_jogo'),
 
 ]
