@@ -48,7 +48,7 @@ from app.views import (
     TurmaAlunoListCreateAPIView,
     get_jogo_by_pin,
     get_questoes_by_jogo,
-    
+    get_alunos_by_turma
 )
 
 router = routers.DefaultRouter()
@@ -101,6 +101,7 @@ urlpatterns = [
     # Rotas para turma-aluno
     path('turma-aluno/vizualizar/', TurmaAlunoViewSet.as_view({'get': 'list'})),
     path('turma-aluno/cadastrar/', TurmaAlunoListCreateAPIView.as_view(), name='turma-aluno-list-create'),
+    path('turmas/<int:turma_id>/alunos/', get_alunos_by_turma, name='get_alunos_by_turma'),
 
     # Rotas para pegar um jogo pelo pin
     path('jogo/<str:pin>/', get_jogo_by_pin, name='get_jogo_by_pin'),

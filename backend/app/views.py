@@ -9,6 +9,8 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404
+
 
 class ProfessorMenuView(APIView):
     permission_classes = [AllowAny]  # Permite que qualquer um acesse essa view
@@ -175,6 +177,7 @@ class AlunoRetrieveUpdateDestroyAPIView(generics.GenericAPIView,mixins.RetrieveM
 
     #Atualizar
     def put(self, request, *args, **kwargs):
+        print(request.data)  # Adicione este log para verificar os dados recebidos
         return self.update(request, *args, **kwargs)
 
     #Excluir
@@ -255,3 +258,12 @@ def get_questoes_by_jogo(request, jogo_id):
     except Jogo.DoesNotExist:
         return Response({"error": "Jogo não encontrado"}, status=status.HTTP_404_NOT_FOUND)
     
+@api_view(['GET'])
+def get_alunos_by_turma(request, turma_id):
+    try:
+        turma_alunos = Turma_Aluno.objects.filter(turma_id=turma_id)
+        alunos = [ta.aluno for ta in turma_alunos]
+        serializer = AlunoSerializer(alunos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Turma.DoesNotExist:
+        return Response({"error": "Turma não encontrada"}, status=status.HTTP_404_NOT_FOUND)
