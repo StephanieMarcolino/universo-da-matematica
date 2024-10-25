@@ -24,7 +24,7 @@
                 <a class="nav-link" href="/cadastrar-perguntas">Criar Questões</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/imprimir-jogos">Imprimir Jogos</a>
+                <a class="nav-link" href="/imprimir-jogos">Baixar Jogos</a>
               </li>
             </ul>
             <li class="nav-item dropdown">

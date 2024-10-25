@@ -27,13 +27,26 @@ export default {
   name: 'VisualizarTurmasComponent',
   data() {
     return {
-      turmas: [
-        { id: 1, nome: 'Turma A', escola: 'Escola 1', serie: 6, ano: 2024 },
-        { id: 2, nome: 'Turma B', escola: 'Escola 2', serie: 7, ano: 2025 },
-      ],
+      turmas: [],
     };
   },
+  mounted() {
+    this.buscarTurmas();
+  },
   methods: {
+
+    async buscarTurmas() {
+      try {
+        // Chama a API para buscar as turmas
+        const response = await fetch(`http://127.0.0.1:8000/turmas/vizualizar/`);
+        const data = await response.json();
+        this.turmas = data;
+
+      } catch (error) {
+        console.error('Erro ao buscar as perguntas da API:', error);
+      }
+    },
+
     selecionarTurma(turma) {
       this.$router.push({ name: 'DetalhesTurma', params: { turmaId: turma.id } });
     },
@@ -50,7 +63,8 @@ export default {
 h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #333; /* Cor mais suave para o título */
+  color: #333;
+  /* Cor mais suave para o título */
 }
 
 table {
@@ -58,20 +72,26 @@ table {
   border-collapse: collapse;
   border-radius: 10px;
   overflow: hidden;
-  background-color: #f9f9f9; /* Fundo claro para a tabela */
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Leve sombra para destaque */
+  background-color: #f9f9f9;
+  /* Fundo claro para a tabela */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  /* Leve sombra para destaque */
 }
 
-th, td {
+th,
+td {
   padding: 12px;
   border: 1px solid #ddd;
   text-align: center;
-  color: #333; /* Texto mais escuro para contraste */
+  color: #333;
+  /* Texto mais escuro para contraste */
 }
 
 thead {
-  background-color: #b3b3b3; /* Fundo azul para o cabeçalho */
-  color: #ffffff; /* Texto branco no cabeçalho */
+  background-color: #b3b3b3;
+  /* Fundo azul para o cabeçalho */
+  color: #ffffff;
+  /* Texto branco no cabeçalho */
 }
 
 tbody tr {
@@ -79,7 +99,8 @@ tbody tr {
 }
 
 tbody tr:hover {
-  background-color: #f0f0f0; /* Efeito de hover mais claro */
+  background-color: #f0f0f0;
+  /* Efeito de hover mais claro */
 }
 
 tbody tr:last-child td {

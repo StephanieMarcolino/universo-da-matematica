@@ -4,7 +4,6 @@ import TelaCadastroProfessor from '@/views/CadastroProfessor.vue'
 import TelaLoginAluno from '@/views/LoginAluno.vue'
 import TelaCadastroAluno from '@/views/CadastroAluno.vue'
 import TelaMapa from '@/views/Mapa.vue';
-import TelaMapaJogo2 from '@/views/MapaJogo2.vue';
 import TelaPergunta from '@/views/TelaPerguntas.vue'
 import TelaInicialAluno from '@/views/TelaInicialAluno.vue';
 import TelaInicial from '@/views/TelaInicial.vue'
@@ -51,11 +50,6 @@ const routes = [
     path: '/mapa',
     name: 'mapa',
     component: TelaMapa, 
-  },
-  {
-    path: '/jogo2/mapa',
-    name: 'mapa-jogo2',
-    component: TelaMapaJogo2, 
   },
   {
     path: '/pergunta/:id',

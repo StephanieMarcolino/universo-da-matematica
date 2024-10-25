@@ -1,8 +1,8 @@
 <template>
   <div class="vh-100 vw-100 background">
-    <audio ref="backgroundMusic" :src="music" loop></audio>
+    <audio ref="backgroundMusic" :src="musica" loop></audio>
     <div class="score">
-      Pontuação: {{ score }}
+      Pontuação: {{ pontuacao }}
     </div>
 
     <div class="level-map" ref="levelMap">
@@ -22,7 +22,7 @@
              T 1300 225" stroke="white" stroke-dasharray="5,5" stroke-width="3" fill="transparent" />
 
         <!-- Botões dos Níveis -->
-        <g v-for="level in levels" :key="level.id">
+        <g v-for="level in niveis" :key="level.id">
           <foreignObject :x="level.x - 25" :y="level.y - 25" width="55" height="105">
             <button type="button" :class="getLevelClass(level.id)"
               @click="isClickable(level.id) ? selectLevel(level.id) : null" >
@@ -31,6 +31,14 @@
           </foreignObject>
         </g>
       </svg>
+    </div>
+
+     <!-- Mensagem de parabéns quando o nível 10 for concluído -->
+     <div v-if="nivelConcluido" class="congratulations-popup">
+      <h2>Parabéns!</h2>
+      <p>Você concluiu todos os níveis!</p>
+      <p>Sua pontuação final é: {{ pontuacao }}</p>
+      <button @click="fecharPopup">Fechar</button>
     </div>
 
     <!-- Botão de Menu -->
@@ -66,11 +74,12 @@ export default {
   name: 'LevelMap',
   data() {
     return {
-      music: backgroundMusic,
-      score: 100,
-      currentLevel: 5,
-      completedLevels: [1,2,3,4],
-      levels: [
+      musica: backgroundMusic,
+      pontuacao: '',
+      nivelAtual: '',
+      niveisCompletos: [],
+      nivelConcluido: false,
+      niveis: [
         { id: 1, x: 50, y: 200 },
         { id: 2, x: 200, y: 250 },
         { id: 3, x: 350, y: 400 },
@@ -88,16 +97,38 @@ export default {
       isDragging: false,
       startX: 0,
       scrollLeft: 0,
+      jogo: localStorage.getItem("jogoId"),
+      perguntas: [],
+      alunoId: localStorage.getItem("aluno"),
     };
   },
   methods: {
+    async buscarPerguntas() {
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/jogo/${this.jogo}/questoes/`);
+                const data = await response.json();
+                this.perguntas = data;
+
+            } catch (error) {
+                console.error('Erro ao buscar as perguntas da API:', error);
+            }
+        },
     async fetchProgress() {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/alunos/${1}/progresso`);
+        const response = await fetch(`http://127.0.0.1:8000/alunos/${this.alunoId}/`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
         const data = await response.json();
-        console.log(data);
-        // this.currentLevel = data.progresso;
-        // this.completedLevels = Array.from({ length: this.currentLevel }, (_, i) => i + 1);
+        this.nivelAtual = data.progresso;
+        this.niveisCompletos = Array.from({ length: this.nivelAtual }, (_, i) => i + 1);
+        this.pontuacao = data.pontuacao;
+        if (this.nivelAtual === 11) {
+        this.nivelConcluido = true; // Mostra a mensagem de parabéns
+      }
+        localStorage.setItem('pontuacao', this.pontuacao);
       } catch (error) {
         console.error('Erro ao buscar progresso:', error);
       }
@@ -105,10 +136,14 @@ export default {
     selectLevel(levelId) {
       localStorage.setItem('nivelSelecionado', levelId);
       localStorage.setItem('musica', this.isMusicPlaying);
-      this.$router.push(`/pergunta/${levelId}`);
+      this.$router.push({
+            name: 'pergunta', // Nome da rota de destino
+            params: { id: levelId }, // Parâmetro da rota
+            query: { pergunta: JSON.stringify(this.perguntas[levelId - 1]) }
+          });
     },
     isClickable(levelId) {
-      return this.completedLevels.includes(levelId) || levelId === this.currentLevel;
+      return levelId === this.nivelAtual;
     },
     onMouseDown(e) {
       this.isDragging = true;
@@ -132,9 +167,9 @@ export default {
       this.$refs.levelMap.style.cursor = 'grab';
     },
     getLevelClass(levelId) {
-      if (levelId === this.currentLevel) {
+      if (levelId === this.nivelAtual) {
         return 'btn btn-primary level-button rounded-circle';
-      } else if (this.completedLevels.includes(levelId)) {
+      } else if (this.niveisCompletos.includes(levelId)) {
         return 'btn btn-light level-button rounded-circle text-primary';
       } else {
         return 'btn btn-secondary level-button rounded-circle';
@@ -156,6 +191,9 @@ export default {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
     },
+    fecharPopup() {
+      this.nivelConcluido = false; // Fecha a popup de parabéns
+    }
   },
   async mounted() {
     const storedMusicState = localStorage.getItem('musica');
@@ -171,6 +209,7 @@ export default {
     }
 
     await this.fetchProgress();
+    this.buscarPerguntas()
 
     const levelMap = this.$refs.levelMap;
     levelMap.addEventListener('mousedown', this.onMouseDown);
@@ -252,7 +291,6 @@ svg {
 .level-button {
   position: relative;
   z-index: 0;
-  /* Botão estará atrás da imagem */
   width: 50px;
   height: 50px;
   font-size: 1.2rem;
@@ -313,4 +351,31 @@ svg {
   border-radius: 5px;
   cursor: pointer;
 }
+.congratulations-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+  text-align: center;
+  z-index: 1000;
+}
+
+.congratulations-popup h2 {
+  margin-bottom: 10px;
+}
+
+.congratulations-popup button {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #000064;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 </style>

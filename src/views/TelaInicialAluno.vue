@@ -1,8 +1,9 @@
 <template>
     <div class="vh-100 vw-100 login-container">
         <div class="top-right">
-            <button class="btn btn-outline-secondary btn-block" @click="alunoLogin">
-                Jogo 2
+            <button class="btn btn-outline-secondary btn-block">
+                <a
+                    href="https://docs.google.com/forms/d/e/1FAIpQLScyq2Y2hHM47ItDnxj5N4CQGOhGIAkSyV_vnXq70hx3ktWVAw/viewform?usp=sf_link">Questionário</a>
             </button>
             <button class="btn btn-outline-secondary btn-block" @click="professorLogin">
                 Professor Login
@@ -14,11 +15,20 @@
                 <form @submit.prevent="submitForm">
                     <div class="mb-4 input-group">
                         <span class="input-group-text"><i class="fas fa-user"></i></span>
-                        <input v-model="nome" type="text" class="form-control" id="nome" placeholder="Nome Completo" required>
+                        <input v-model="nome" type="text" class="form-control" id="nome" placeholder="Nome Completo"
+                            required>
+                    </div>
+                    <div class="mb-4 input-group">
+                        <span class="input-group-text"><i class="fas fa-users"></i></span>
+                        <select v-model="turma" type="text" class="form-control" id="nome" placeholder="Turma" required>
+                            <option value="" disabled selected>Selecione uma turma</option>
+                            <option v-for="(turma) in turmas" :key="turma.id" :value="turma.id">{{ turma.nome }}</option>
+                        </select>
                     </div>
                     <div class="mb-4 input-group">
                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                        <input v-model="pin" type="text" class="form-control" id="pin" placeholder="Pin do Jogo" required>
+                        <input v-model="pin" type="text" class="form-control" id="pin" placeholder="Pin do Jogo"
+                            required>
                     </div>
                     <div class="text-center">
                         <button type="button" class="btn btn-primary btn-block mb-4" @click="login">
@@ -37,18 +47,88 @@ export default {
         return {
             nome: '',
             pin: '',
+            turma: '',
+            turmas: [],
+            jogo: ''
         };
     },
+    mounted() {
+        this.buscarTurmas()
+    },
     methods: {
-        async login() {
-            this.$router.push('/mapa');
+        async buscarTurmas() {
+            try {
+                // Chama a API para buscar as turmas
+                const response = await fetch(`http://127.0.0.1:8000/turmas/vizualizar/`);
+                const data = await response.json();
+                this.turmas = data;
+
+            } catch (error) {
+                console.error('Erro ao buscar as perguntas da API:', error);
+            }
         },
+        async login() {
+            try {
+                // Chama a API para buscar as jogo pelo pin
+                const response = await fetch(`http://127.0.0.1:8000/jogo/${this.pin}/`);
+                const data = await response.json();
+                if (data.error) {
+                    alert("Pin não encontrado")
+                } else {
+                    localStorage.setItem("jogoId", data.id)
+                    if(this.salvarAluno()){
+                        this.$router.push('/mapa');}
+                    
+                }
+
+            } catch (error) {
+                console.error('Erro ao buscar dados da API:', error);
+            }
+        },
+        async salvarAluno() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/alunos/cadastrar/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ nome: this.nome })
+                });
+                if (!response.ok) {
+                    throw new Error(`Erro: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Aluno salvo com sucesso:', data);
+                this.salvarTurmaAluno(data.id)
+                localStorage.setItem("aluno", data.id)
+            } catch (error) {
+                console.error('Erro ao salvar dados na API:', error);
+            }
+        },
+        async salvarTurmaAluno(alunoId) {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/turma-aluno/cadastrar/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ aluno: alunoId, turma : this.turma })
+                });
+                if (!response.ok) {
+                    throw new Error(`Erro: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Turma-Aluno salvo com sucesso:', data);
+            } catch (error) {
+                console.error('Erro ao salvar dados na API:', error);
+            }
+        },
+
         professorLogin() {
             this.$router.push('/login-professor');
         },
-        alunoLogin() {
-            this.$router.push('/login-aluno');
-        }
     }
 };
 </script>
@@ -115,5 +195,4 @@ export default {
     border-color: #0097fc;
     color: white;
 }
-
 </style>

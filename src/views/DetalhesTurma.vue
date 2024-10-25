@@ -12,7 +12,7 @@
         <tbody>
           <tr v-for="aluno in alunos" :key="aluno.id">
             <td>{{ aluno.nome }}</td>
-            <td>{{ aluno.progresso }}%</td>
+            <td>{{ (parseInt(aluno.progresso) - 1) *10 }}%</td>
             <td>{{ aluno.pontuacao }}</td>
           </tr>
         </tbody>
@@ -27,23 +27,23 @@
     data() {
       return {
         turma: {},
-        alunos: [
-          { id: 1, nome: 'Aluno 1', progresso: 80, pontuacao: 95 },
-          { id: 2, nome: 'Aluno 2', progresso: 90, pontuacao: 98 },
-        ],
+        alunos: [],
       };
     },
     created() {
       const turmaId = this.$route.params.turmaId;
-      this.turma = this.getTurmaById(turmaId);
+      this.getAlunos(turmaId);
     },
     methods: {
-      getTurmaById(id) {
-        const turmas = [
-          { id: 1, nome: 'Turma A', escola: 'Escola 1', serie: 6, ano: 2024 },
-          { id: 2, nome: 'Turma B', escola: 'Escola 2', serie: 7, ano: 2025 },
-        ];
-        return turmas.find(turma => turma.id === Number(id));
+      async getAlunos(id) {
+        try {
+                const response = await fetch(`http://127.0.0.1:8000/turmas/${id}/alunos/`);
+                const data = await response.json();
+                this.alunos = data;
+
+            } catch (error) {
+                console.error('Erro ao buscar as perguntas da API:', error);
+            }
       },
       voltar() {
         this.$router.push({ name: 'VisualizarTurmas' });

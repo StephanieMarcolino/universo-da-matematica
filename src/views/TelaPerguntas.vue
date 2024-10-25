@@ -8,7 +8,7 @@
         </div>
 
         <div class="card">
-            <h2>{{ perguntaAtual.id }}. {{ perguntaAtual.pergunta }}</h2>
+            <h2>{{ perguntaAtual.id }}. {{ perguntaAtual.descricao }}</h2>
             <hr />
             <div class="card-alternativa" v-for="(alternativa, index) in alternativasEmbaralhadas" :key="index"
                 @click="responder(index)">
@@ -16,6 +16,7 @@
                 <input type="radio" :id="'alternativa' + index" name="alternativa" class="radio-button"
                     v-model="respostaSelecionada" :value="index" />
             </div>
+
 
             <button type="button" class="btn btn-outline-primary" @click="conferir">Ok</button>
         </div>
@@ -61,7 +62,6 @@
     </div>
 </template>
 
-
 <script>
 import backgroundMusic from '@/assets/audio-fundo.mp3';
 
@@ -80,15 +80,20 @@ export default {
             isMenuOpen: false,
             isMusicPlaying: true,
             isDragging: false,
-            errosConsecutivos: 0, // Adiciona essa propriedade para rastrear os erros consecutivos
+            errosConsecutivos: 0,
+            alunoId: localStorage.getItem("aluno"),
+            levelId: localStorage.getItem('nivelSelecionado'),
+            pontuacaoAntiga: localStorage.getItem('pontuacao'),
+            pontuacao: ''
         };
     },
     mounted() {
+        this.perguntaAtual = JSON.parse(this.$route.query.pergunta);
+
         const storedMusicState = localStorage.getItem('musica');
         this.isMusicPlaying = storedMusicState === 'true';
 
         const storedErrosConsecutivos = localStorage.getItem('errosConsecutivos');
-        console.log('storedErrosConsecutivos:',storedErrosConsecutivos)
         this.errosConsecutivos = storedErrosConsecutivos ? parseInt(storedErrosConsecutivos) : 0;
 
         const audio = this.$refs.backgroundMusic;
@@ -105,30 +110,9 @@ export default {
             }, 100);
         }
 
-        const levelId = localStorage.getItem('nivelSelecionado');
-        if (levelId && parseInt(levelId) > 0 && parseInt(levelId) <= 10) {
-            this.selecionarPergunta(parseInt(levelId));
-        } else {
-            console.error(`ID de nível inválido: ${levelId}`);
-        }
+        this.embaralharAlternativas();
     },
     methods: {
-        async selecionarPergunta(levelId) {
-            try {
-                // Reseta as vidas antes de buscar a pergunta
-                this.vidas = 3;
-
-                // Chama a API para buscar as perguntas
-                const response = await fetch(`http://127.0.0.1:5000/perguntas/${levelId}`);
-                const data = await response.json();
-                this.perguntaAtual = data;
-
-                // Embaralhar as alternativas
-                this.embaralharAlternativas();
-            } catch (error) {
-                console.error('Erro ao buscar as perguntas da API:', error);
-            }
-        },
 
         embaralharAlternativas() {
             const alternativas = [
@@ -140,7 +124,6 @@ export default {
 
             // Embaralhar o array de alternativas
             this.alternativasEmbaralhadas = this.shuffleArray(alternativas);
-console.log('errosConsecutivos:',this.errosConsecutivos)
             // Verifica se deve remover 2 alternativas erradas
             if (this.errosConsecutivos >= 2) {
                 this.removerAlternativasErradas();
@@ -174,59 +157,63 @@ console.log('errosConsecutivos:',this.errosConsecutivos)
             this.respostaSelecionada = index; // Define a resposta selecionada ao clicar na alternativa
         },
         conferir() {
-    if (this.respostaSelecionada !== null) {
-        const respostaCorreta = this.alternativasEmbaralhadas.find(alternativa => alternativa.correta);
-        const respostaUsuario = this.alternativasEmbaralhadas[this.respostaSelecionada];
-        if (respostaCorreta.texto === respostaUsuario.texto) {
-            this.redirecionarParaMapa = true;
-            this.mensagem = this.vidas === 3 
-                ? 'Incrível! Você acertou de primeira, excelente trabalho!'
-                : this.vidas === 2 
-                ? 'Boa! Acertou na segunda tentativa, continue assim!'
-                : 'Ufa! Você acertou no último momento, parabéns pela persistência!';
-            this.errosConsecutivos = 0; // Reseta os erros consecutivos
-            localStorage.setItem('errosConsecutivos', this.errosConsecutivos);
-        } else {
-            this.vidas--;
-            this.redirecionarParaMapa = false;
-            
-            if (this.vidas > 0) {
-                this.mensagem = this.vidas === 2 
-                    ? 'Não desista! Ainda tem mais duas chances!'
-                    : 'Última tentativa! Pense com cuidado!';
-            } else {
-                this.errosConsecutivos++;
-                this.mensagem = 'Você perdeu todas as vidas. Não desanime, tente novamente!';
-                this.redirecionarParaMapa = true;
-            }
-        }
-        this.exibirPopup = true;
-    } else {
-        this.mensagem = 'Por favor, selecione uma resposta!';
-        this.exibirPopup = true; // Exibe o popup
-    }
-},
+            if (this.respostaSelecionada !== null) {
+                const respostaCorreta = this.alternativasEmbaralhadas.find(alternativa => alternativa.correta);
+                const respostaUsuario = this.alternativasEmbaralhadas[this.respostaSelecionada];
+                if (respostaCorreta.texto === respostaUsuario.texto) {
+                    this.redirecionarParaMapa = true;
+                    this.mensagem = this.vidas === 3
+                        ? 'Incrível! Você acertou de primeira, excelente trabalho!'
+                        : this.vidas === 2
+                            ? 'Boa! Acertou na segunda tentativa, continue assim!'
+                            : 'Ufa! Você acertou no último momento, parabéns pela persistência!';
+                    this.errosConsecutivos = 0; // Reseta os erros consecutivos
+                    localStorage.setItem('errosConsecutivos', this.errosConsecutivos);
+                } else {
+                    this.vidas--;
+                    this.redirecionarParaMapa = false;
 
-        async atualizarNivel(nivel) {
-            const alunoId = 1; // ID do aluno que você deseja atualizar
+                    if (this.vidas > 0) {
+                        this.mensagem = this.vidas === 2
+                            ? 'Não desista! Ainda tem mais duas chances!'
+                            : 'Última tentativa! Pense com cuidado!';
+                    } else {
+                        this.errosConsecutivos++;
+                        this.mensagem = 'Você perdeu todas as vidas. Não desanime, tente novamente!';
+                        this.redirecionarParaMapa = true;
+                    }
+                }
+                this.exibirPopup = true;
+            } else {
+                this.mensagem = 'Por favor, selecione uma resposta!';
+                this.exibirPopup = true; // Exibe o popup
+            }
+        },
+
+        async atualizarNivel() {
             try {
-                const response = await fetch(`http://127.0.0.1:5000/alunos/${alunoId}/progresso`, {
+                const response = await fetch(`http://127.0.0.1:8000/alunos/${this.alunoId}/`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ nivel: nivel }),
+                    body: JSON.stringify({ pontuacao: this.pontuacao, progresso: parseInt(this.levelId) + 1 }), // Enviando o progresso
                 });
 
+
                 if (!response.ok) {
-                    throw new Error('Erro ao atualizar o nível');
+                    const errorData = await response.json(); // Captura os dados de erro da resposta
+                    throw new Error(`Erro ${response.status}: ${JSON.stringify(errorData)}`);
+
                 }
+
                 const data = await response.json();
                 console.log('Nível atualizado:', data);
             } catch (error) {
                 console.error('Erro ao atualizar nível do aluno:', error);
             }
         },
+
         adjustVolume() {
             const audio = this.$refs.backgroundMusic;
             if (audio) {
@@ -252,10 +239,17 @@ console.log('errosConsecutivos:',this.errosConsecutivos)
             this.exibirPopup = false;
             localStorage.setItem('musica', this.isMusicPlaying);
             if (this.redirecionarParaMapa) {
-                console.log('errosConsecutivos salvar:',this.errosConsecutivos)
                 localStorage.setItem('errosConsecutivos', this.errosConsecutivos);
+                console.log("erros",this.errosConsecutivos)
                 // Atualiza o nível do aluno antes de redirecionar
-                this.atualizarNivel(this.levelId + 1) // Atualiza para o próximo nível, se desejado
+                this.pontuacao = this.vidas === 3
+                    ? parseInt(this.pontuacaoAntiga, 10) + 30
+                    : this.vidas === 2
+                        ? parseInt(this.pontuacaoAntiga, 10) + 20
+                        : this.vidas === 1
+                            ? parseInt(this.pontuacaoAntiga, 10) + 10
+                            : parseInt(this.pontuacaoAntiga, 10) + 0;
+                this.atualizarNivel()
                     .then(() => {
                         // Redireciona para o mapa após a atualização
                         this.$router.push(`/mapa`);
