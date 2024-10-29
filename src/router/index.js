@@ -1,8 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import TelaLoginProfessor from '@/views/LoginProfessor.vue'
 import TelaCadastroProfessor from '@/views/CadastroProfessor.vue'
-import TelaLoginAluno from '@/views/LoginAluno.vue'
-import TelaCadastroAluno from '@/views/CadastroAluno.vue'
 import TelaMapa from '@/views/Mapa.vue';
 import TelaPergunta from '@/views/TelaPerguntas.vue'
 import TelaInicialAluno from '@/views/TelaInicialAluno.vue';
@@ -26,16 +24,6 @@ const routes = [
     path: '/login-professor',
     name: 'login-professor',
     component: TelaLoginProfessor, 
-  },
-  {
-    path: '/cadastro-aluno',
-    name: 'cadastro-aluno',
-    component: TelaCadastroAluno, 
-  },
-  {
-    path: '/login-aluno',
-    name: 'login-aluno',
-    component: TelaLoginAluno, 
   },
   {
     path: '/inicio-aluno',

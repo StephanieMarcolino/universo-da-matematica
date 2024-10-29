@@ -1,5 +1,6 @@
 <template>
   <div class="visualizar-turmas">
+    <LoadSpinner :isLoading="loadingSubmit" />
     <h2>Lista de Turmas</h2>
     <table class="turmas-table">
       <thead>
@@ -23,11 +24,17 @@
 </template>
 
 <script>
+import LoadSpinner from '../components/LoadSpiner.vue';
+
 export default {
+    components: {
+    LoadSpinner
+  },
   name: 'VisualizarTurmasComponent',
   data() {
     return {
       turmas: [],
+      loadingSubmit: false,
     };
   },
   mounted() {
@@ -36,6 +43,7 @@ export default {
   methods: {
 
     async buscarTurmas() {
+      this.loadingSubmit = true;
       try {
         // Chama a API para buscar as turmas
         const response = await fetch(`http://127.0.0.1:8000/turmas/vizualizar/`);
@@ -44,6 +52,8 @@ export default {
 
       } catch (error) {
         console.error('Erro ao buscar as perguntas da API:', error);
+      } finally {
+        this.loadingSubmit = false; // Desativa o loading
       }
     },
 

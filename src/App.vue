@@ -15,7 +15,7 @@
 <script>
 import TelaMapa from './views/Mapa.vue'
 import TelaLoginProfessor from '@/views/LoginProfessor.vue'
-import TelaCadastroProfessor from '@/views/CadastroAluno.vue'
+import TelaCadastroProfessor from '@/views/CadastroProfessor.vue'
 import TelaPergunta from '@/views/TelaPerguntas.vue'
 import TelaInicialAluno from '@/views/TelaInicialAluno.vue'
 import NavbarComponent from '@/components/NavBarComponent.vue'

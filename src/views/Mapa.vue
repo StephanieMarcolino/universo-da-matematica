@@ -1,5 +1,6 @@
 <template>
   <div class="vh-100 vw-100 background">
+    <LoadSpinner :isLoading="loadingSubmit" />
     <audio ref="backgroundMusic" :src="musica" loop></audio>
     <div class="score">
       Pontuação: {{ pontuacao }}
@@ -33,8 +34,8 @@
       </svg>
     </div>
 
-     <!-- Mensagem de parabéns quando o nível 10 for concluído -->
-     <div v-if="nivelConcluido" class="congratulations-popup">
+    <!-- Mensagem de parabéns quando o nível 10 for concluído -->
+    <div v-if="nivelConcluido" class="congratulations-popup">
       <h2>Parabéns!</h2>
       <p>Você concluiu todos os níveis!</p>
       <p>Sua pontuação final é: {{ pontuacao }}</p>
@@ -69,14 +70,19 @@
 
 <script>
 import backgroundMusic from '@/assets/audio-fundo.mp3';
+import LoadSpinner from '../components/LoadSpiner.vue';
 
 export default {
+    components: {
+    LoadSpinner,
+  },
   name: 'LevelMap',
   data() {
     return {
       musica: backgroundMusic,
-      pontuacao: '',
-      nivelAtual: '',
+      loadingSubmit: false,
+      pontuacao: 0,
+      nivelAtual: 1,
       niveisCompletos: [],
       nivelConcluido: false,
       niveis: [
@@ -104,67 +110,54 @@ export default {
   },
   methods: {
     async buscarPerguntas() {
-            try {
-                const response = await fetch(`http://127.0.0.1:8000/jogo/${this.jogo}/questoes/`);
-                const data = await response.json();
-                this.perguntas = data;
-
-            } catch (error) {
-                console.error('Erro ao buscar as perguntas da API:', error);
-            }
-        },
+      this.loadingSubmit = true;
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/jogo/${this.jogo}/questoes/`);
+        const data = await response.json();
+        this.perguntas = data;
+      } catch (error) {
+        console.error('Erro ao buscar as perguntas da API:', error);
+      } finally {
+        this.loadingSubmit = false;
+      }
+    },
     async fetchProgress() {
+      this.loadingSubmit = true;
       try {
         const response = await fetch(`http://127.0.0.1:8000/alunos/${this.alunoId}/`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
         const data = await response.json();
         this.nivelAtual = data.progresso;
         this.niveisCompletos = Array.from({ length: this.nivelAtual }, (_, i) => i + 1);
         this.pontuacao = data.pontuacao;
         if (this.nivelAtual === 11) {
-        this.nivelConcluido = true; // Mostra a mensagem de parabéns
-      }
+          this.nivelConcluido = true;
+        }
         localStorage.setItem('pontuacao', this.pontuacao);
       } catch (error) {
         console.error('Erro ao buscar progresso:', error);
+      } finally {
+        this.loadingSubmit = false;
       }
     },
     selectLevel(levelId) {
+      this.loadingSubmit = true;
       localStorage.setItem('nivelSelecionado', levelId);
       localStorage.setItem('musica', this.isMusicPlaying);
       this.$router.push({
-            name: 'pergunta', // Nome da rota de destino
-            params: { id: levelId }, // Parâmetro da rota
-            query: { pergunta: JSON.stringify(this.perguntas[levelId - 1]) }
-          });
+        name: 'pergunta',
+        params: { id: levelId },
+        query: { pergunta: JSON.stringify(this.perguntas[levelId - 1]) }
+      }).finally(() => {
+        this.loadingSubmit = false;
+      });
     },
     isClickable(levelId) {
       return levelId === this.nivelAtual;
-    },
-    onMouseDown(e) {
-      this.isDragging = true;
-      this.startX = e.pageX - this.$refs.levelMap.offsetLeft;
-      this.scrollLeft = this.$refs.levelMap.scrollLeft;
-      this.$refs.levelMap.style.cursor = 'grabbing';
-    },
-    onMouseMove(e) {
-      if (!this.isDragging) return;
-      e.preventDefault();
-      const x = e.pageX - this.$refs.levelMap.offsetLeft;
-      const walk = (x - this.startX) * 1.5;
-      this.$refs.levelMap.scrollLeft = this.scrollLeft - walk;
-    },
-    onMouseUp() {
-      this.isDragging = false;
-      this.$refs.levelMap.style.cursor = 'grab';
-    },
-    onMouseLeave() {
-      this.isDragging = false;
-      this.$refs.levelMap.style.cursor = 'grab';
     },
     getLevelClass(levelId) {
       if (levelId === this.nivelAtual) {
@@ -192,7 +185,7 @@ export default {
       this.isMenuOpen = !this.isMenuOpen;
     },
     fecharPopup() {
-      this.nivelConcluido = false; // Fecha a popup de parabéns
+      this.nivelConcluido = false;
     }
   },
   async mounted() {
@@ -209,7 +202,7 @@ export default {
     }
 
     await this.fetchProgress();
-    this.buscarPerguntas()
+    this.buscarPerguntas();
 
     const levelMap = this.$refs.levelMap;
     levelMap.addEventListener('mousedown', this.onMouseDown);
@@ -226,7 +219,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .background {

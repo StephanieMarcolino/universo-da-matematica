@@ -1,5 +1,6 @@
 <template>
     <div v-if="perguntaAtual" class="vh-100 vw-100 background">
+        <LoadSpinner :isLoading="loadingSubmit" />
         <audio ref="backgroundMusic" :src="music" loop></audio>
         <div class="vidas">
             <div :class="{ 'coracao-cheio': vidas >= 1, 'coracao-vazio': vidas < 1 }"></div>
@@ -64,11 +65,16 @@
 
 <script>
 import backgroundMusic from '@/assets/audio-fundo.mp3';
+import LoadSpinner from '../components/LoadSpiner.vue';
 
 export default {
+    components: {
+    LoadSpinner
+  },
     data() {
         return {
             perguntaAtual: null,
+            loadingSubmit: false,
             alternativasEmbaralhadas: [],
             respostaSelecionada: null,
             vidas: 3,
@@ -157,6 +163,7 @@ export default {
             this.respostaSelecionada = index; // Define a resposta selecionada ao clicar na alternativa
         },
         conferir() {
+            this.loadingSubmit = true;
             if (this.respostaSelecionada !== null) {
                 const respostaCorreta = this.alternativasEmbaralhadas.find(alternativa => alternativa.correta);
                 const respostaUsuario = this.alternativasEmbaralhadas[this.respostaSelecionada];
@@ -184,13 +191,16 @@ export default {
                     }
                 }
                 this.exibirPopup = true;
+                this.loadingSubmit = false;
             } else {
+                this.loadingSubmit = false;
                 this.mensagem = 'Por favor, selecione uma resposta!';
                 this.exibirPopup = true; // Exibe o popup
             }
         },
 
         async atualizarNivel() {
+            this.loadingSubmit = true;
             try {
                 const response = await fetch(`http://127.0.0.1:8000/alunos/${this.alunoId}/`, {
                     method: 'PUT',
@@ -209,7 +219,9 @@ export default {
 
                 const data = await response.json();
                 console.log('Nível atualizado:', data);
+                this.loadingSubmit = false;
             } catch (error) {
+                this.loadingSubmit = false;
                 console.error('Erro ao atualizar nível do aluno:', error);
             }
         },
@@ -237,6 +249,7 @@ export default {
 
         fecharPopup() {
             this.exibirPopup = false;
+            this.loadingSubmit = true;
             localStorage.setItem('musica', this.isMusicPlaying);
             if (this.redirecionarParaMapa) {
                 localStorage.setItem('errosConsecutivos', this.errosConsecutivos);
@@ -249,12 +262,14 @@ export default {
                         : this.vidas === 1
                             ? parseInt(this.pontuacaoAntiga, 10) + 10
                             : parseInt(this.pontuacaoAntiga, 10) + 0;
+                this.loadingSubmit = false;
                 this.atualizarNivel()
                     .then(() => {
                         // Redireciona para o mapa após a atualização
                         this.$router.push(`/mapa`);
                     })
                     .catch((error) => {
+                        this.loadingSubmit = false;
                         console.error('Erro ao redirecionar para o mapa:', error);
                     });
             }

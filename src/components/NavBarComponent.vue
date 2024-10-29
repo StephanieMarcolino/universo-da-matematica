@@ -33,7 +33,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" href="/meuperfil"><i class="fas fa-user"></i> Meu Perfil</a></li>
-                    <li><a class="dropdown-item" href="/login" @click="confirmAction"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                    <li><a class="dropdown-item" href="/login-professor" @click="confirmAction"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
                 </ul>
               </li>
           </div>
