@@ -91,9 +91,9 @@ export default {
                     this.loadingSubmit = false;
 
                     localStorage.setItem("jogoId", data.id);
-                    if (this.salvarAluno()) {
-                        this.$router.push('/mapa');
-                    }
+                    await this.salvarAluno()
+                    this.$router.push('/mapa');
+                    
                 }
             } catch (error) {
                 this.loadingSubmit = false;

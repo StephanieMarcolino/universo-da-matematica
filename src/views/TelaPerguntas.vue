@@ -94,7 +94,7 @@ export default {
         };
     },
     mounted() {
-        this.perguntaAtual = JSON.parse(this.$route.query.pergunta);
+        this.perguntaAtual = JSON.parse(localStorage.getItem('pergunta'));
 
         const storedMusicState = localStorage.getItem('musica');
         this.isMusicPlaying = storedMusicState === 'true';
@@ -249,12 +249,10 @@ export default {
 
         fecharPopup() {
             this.exibirPopup = false;
-            this.loadingSubmit = true;
             localStorage.setItem('musica', this.isMusicPlaying);
             if (this.redirecionarParaMapa) {
                 localStorage.setItem('errosConsecutivos', this.errosConsecutivos);
                 console.log("erros",this.errosConsecutivos)
-                // Atualiza o nível do aluno antes de redirecionar
                 this.pontuacao = this.vidas === 3
                     ? parseInt(this.pontuacaoAntiga, 10) + 30
                     : this.vidas === 2
@@ -265,7 +263,6 @@ export default {
                 this.loadingSubmit = false;
                 this.atualizarNivel()
                     .then(() => {
-                        // Redireciona para o mapa após a atualização
                         this.$router.push(`/mapa`);
                     })
                     .catch((error) => {

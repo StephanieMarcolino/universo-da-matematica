@@ -81,8 +81,8 @@ export default {
     return {
       musica: backgroundMusic,
       loadingSubmit: false,
-      pontuacao: 0,
-      nivelAtual: 1,
+      pontuacao: '',
+      nivelAtual: '',
       niveisCompletos: [],
       nivelConcluido: false,
       niveis: [
@@ -108,6 +108,35 @@ export default {
       alunoId: localStorage.getItem("aluno"),
     };
   },
+  async mounted() {
+    await this.fetchProgress();
+    this.buscarPerguntas();
+
+    const storedMusicState = localStorage.getItem('musica');
+    this.isMusicPlaying = storedMusicState === 'true';
+
+    const audio = this.$refs.backgroundMusic;
+    audio.volume = this.volume;
+
+    if (this.isMusicPlaying) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
+
+    const levelMap = this.$refs.levelMap;
+    levelMap.addEventListener('mousedown', this.onMouseDown);
+    levelMap.addEventListener('mousemove', this.onMouseMove);
+    levelMap.addEventListener('mouseup', this.onMouseUp);
+    levelMap.addEventListener('mouseleave', this.onMouseLeave);
+  },
+  beforeUnmount() {
+    const levelMap = this.$refs.levelMap;
+    levelMap.removeEventListener('mousedown', this.onMouseDown);
+    levelMap.removeEventListener('mousemove', this.onMouseMove);
+    levelMap.removeEventListener('mouseup', this.onMouseUp);
+    levelMap.removeEventListener('mouseleave', this.onMouseLeave);
+  },
   methods: {
     async buscarPerguntas() {
       this.loadingSubmit = true;
@@ -122,7 +151,6 @@ export default {
       }
     },
     async fetchProgress() {
-      this.loadingSubmit = true;
       try {
         const response = await fetch(`http://127.0.0.1:8000/alunos/${this.alunoId}/`, {
           method: 'GET',
@@ -134,6 +162,10 @@ export default {
         this.nivelAtual = data.progresso;
         this.niveisCompletos = Array.from({ length: this.nivelAtual }, (_, i) => i + 1);
         this.pontuacao = data.pontuacao;
+        console.log('entrou fech progress')
+    console.log('aluno', this.alunoId)
+    console.log('pontuacao', this.pontuacao)
+    console.log('progresso', this.nivelAtual)
         if (this.nivelAtual === 11) {
           this.nivelConcluido = true;
         }
@@ -148,10 +180,12 @@ export default {
       this.loadingSubmit = true;
       localStorage.setItem('nivelSelecionado', levelId);
       localStorage.setItem('musica', this.isMusicPlaying);
+
+      localStorage.setItem('pergunta', JSON.stringify(this.perguntas[levelId - 1]));
       this.$router.push({
         name: 'pergunta',
         params: { id: levelId },
-        query: { pergunta: JSON.stringify(this.perguntas[levelId - 1]) }
+        state: { pergunta: this.perguntas[levelId - 1] }
       }).finally(() => {
         this.loadingSubmit = false;
       });
@@ -187,35 +221,6 @@ export default {
     fecharPopup() {
       this.nivelConcluido = false;
     }
-  },
-  async mounted() {
-    const storedMusicState = localStorage.getItem('musica');
-    this.isMusicPlaying = storedMusicState === 'true';
-
-    const audio = this.$refs.backgroundMusic;
-    audio.volume = this.volume;
-
-    if (this.isMusicPlaying) {
-      audio.play();
-    } else {
-      audio.pause();
-    }
-
-    await this.fetchProgress();
-    this.buscarPerguntas();
-
-    const levelMap = this.$refs.levelMap;
-    levelMap.addEventListener('mousedown', this.onMouseDown);
-    levelMap.addEventListener('mousemove', this.onMouseMove);
-    levelMap.addEventListener('mouseup', this.onMouseUp);
-    levelMap.addEventListener('mouseleave', this.onMouseLeave);
-  },
-  beforeUnmount() {
-    const levelMap = this.$refs.levelMap;
-    levelMap.removeEventListener('mousedown', this.onMouseDown);
-    levelMap.removeEventListener('mousemove', this.onMouseMove);
-    levelMap.removeEventListener('mouseup', this.onMouseUp);
-    levelMap.removeEventListener('mouseleave', this.onMouseLeave);
   },
 };
 </script>
