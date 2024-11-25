@@ -146,10 +146,6 @@ export default {
             // Escolhe aleatoriamente uma alternativa incorreta para manter
             const alternativaExtra = alternativasErradas[Math.floor(Math.random() * alternativasErradas.length)];
             this.alternativasEmbaralhadas = this.shuffleArray([alternativaCorreta, alternativaExtra]);
-
-            // Reseta o contador de erros consecutivos para 0
-            this.errosConsecutivos = 0;
-            localStorage.setItem('errosConsecutivos', this.errosConsecutivos);
         },
         shuffleArray(array) {
             // Função para embaralhar um array (Fisher-Yates shuffle)

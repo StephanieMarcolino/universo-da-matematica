@@ -6,12 +6,15 @@ import TelaPergunta from '@/views/TelaPerguntas.vue'
 import TelaInicialAluno from '@/views/TelaInicialAluno.vue';
 import TelaInicial from '@/views/TelaInicial.vue'
 import TelaImprimirJogos from '@/views/ImprimirJogos.vue';
-import TelaDetalheJogo from '@/views/DetalheJogo.vue';
+import TelaDetalheJogo from '@/views/DetalheJogoBaixar.vue';
 import TelaCadastroTurma from '@/views/CadastroTurma.vue';
 import VisualizarTurmas from '@/views/VisualizarTurmas.vue';
 import DetalhesTurma from '@/views/DetalhesTurma.vue';
 import CadastrarJogo from '@/views/CadastrarJogo.vue';
 import CadastrarPerguntas from '@/views/CadastrarPerguntas.vue';
+import VisualizarJogos from '@/views/VisualizarJogos.vue';
+import DetalhesJogo from '@/views/DetalhesJogo.vue';
+import MeuPerfil from '@/views/MeuPerfil.vue';
 
 const routes = [
   
@@ -81,6 +84,18 @@ const routes = [
   { path: '/cadastrar-jogo', 
     name: 'CadastrarJogo', 
     component: CadastrarJogo 
+  },
+  { path: '/jogos', 
+    name: 'VisualizarJogos', 
+    component: VisualizarJogos 
+  },
+  { path: '/jogos/:jogoId', 
+    name: 'DetalhesJogo', 
+    component: DetalhesJogo 
+  },
+  { path: '/meu-perfil', 
+    name: 'MeuPerfil', 
+    component: MeuPerfil 
   },
 ];
 

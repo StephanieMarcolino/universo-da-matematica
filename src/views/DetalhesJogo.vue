@@ -1,26 +1,23 @@
 <template>
-  <div class="visualizar-turmas">
+  <div class="detalhes-jogo">
     <LoadSpinner :isLoading="loadingSubmit" />
-    <h2>Lista de Turmas</h2>
-    <button @click="this.$router.push({ name: 'cadastro-turma' })" :disabled="loadingSubmit">Cadastrar Turma</button>
-    <table class="turmas-table">
+    <h2>Perguntas do Jogo {{ jogo.nome }}</h2>
+    <table class="perguntas-table" v-if="!loadingSubmit">
       <thead>
         <tr>
-          <th>Nome da Turma</th>
-          <th>Escola</th>
-          <th>Série</th>
-          <th>Ano</th>
+          <th>Descrição</th>
+          <th>Complexidade</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="turma in turmas" :key="turma.id" @click="selecionarTurma(turma)">
-          <td>{{ turma.nome }}</td>
-          <td>{{ turma.escola }}</td>
-          <td>{{ turma.serie }}° série</td>
-          <td>{{ turma.ano }}</td>
+        <tr v-for="pergunta in perguntas" :key="pergunta.id">
+          <td>{{ pergunta.descricao }}</td>
+          <td>{{ pergunta.classificacao}}</td>
         </tr>
       </tbody>
     </table>
+    <p v-if="loadingSubmit">Carregando perguntas...</p>
+    <button @click="voltar" :disabled="loadingSubmit">Voltar</button>
   </div>
 </template>
 
@@ -28,45 +25,44 @@
 import LoadSpinner from '../components/LoadSpiner.vue';
 
 export default {
-    components: {
+  components: {
     LoadSpinner
   },
-  name: 'VisualizarTurmasComponent',
+  name: 'DetalhesjogoComponent',
   data() {
     return {
-      turmas: [],
+      jogo: {},
+      perguntas: [],
       loadingSubmit: false,
     };
   },
-  mounted() {
-    this.buscarTurmas();
+  created() {
+    const jogoId = this.$route.params.jogoId;
+    this.getperguntas(jogoId);
   },
   methods: {
-
-    async buscarTurmas() {
-      this.loadingSubmit = true;
+    async getperguntas(id) {
+      this.loadingSubmit = true; // Ativa o loading
       try {
-        // Chama a API para buscar as turmas
-        const response = await fetch(`http://127.0.0.1:8000/turmas/vizualizar/`);
+        const response = await fetch(`http://127.0.0.1:8000/jogo/${id}/questoes/`);
         const data = await response.json();
-        this.turmas = data;
 
+        this.perguntas = data;
       } catch (error) {
         console.error('Erro ao buscar as perguntas da API:', error);
       } finally {
         this.loadingSubmit = false; // Desativa o loading
       }
     },
-
-    selecionarTurma(turma) {
-      this.$router.push({ name: 'DetalhesTurma', params: { turmaId: turma.id } });
+    voltar() {
+      this.$router.push({ name: 'VisualizarJogos' });
     },
   },
 };
 </script>
 
 <style scoped>
-.visualizar-turmas {
+.detalhes-jogo {
   max-width: 800px;
   margin: 20px auto;
 }
@@ -105,18 +101,10 @@ thead {
   /* Texto branco no cabeçalho */
 }
 
-tbody tr {
-  cursor: pointer;
-}
-
-tbody tr:hover {
-  background-color: #f0f0f0;
-  /* Efeito de hover mais claro */
-}
-
 tbody tr:last-child td {
   border-bottom: none;
 }
+
 button {
   margin-top: 20px;
   padding: 10px 20px;

@@ -68,7 +68,7 @@ export default {
                 const data = await response.json();
                 this.turmas = data;
             } catch (error) {
-                console.error('Erro ao buscar as perguntas da API:', error);
+                console.error('Erro ao buscar as turmas da API:', error);
             }
         },
         async submitForm() {

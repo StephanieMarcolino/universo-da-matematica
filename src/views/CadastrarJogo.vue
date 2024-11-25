@@ -13,24 +13,12 @@
           />
         </div>
         <div class="form-group">
-          <label for="serie">Série</label>
-          <select id="serie" v-model="filtro.serie" @change="filtrarPerguntas" required>
-            <option value="" disabled selected>Selecione a série</option>
-            <option value="6">6° série</option>
-            <option value="7">7° série</option>
-            <option value="8">8° série</option>
-            <option value="9">9° série</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="conteudo">Conteúdo</label>
-          <select id="conteudo" v-model="filtro.conteudo" @change="filtrarPerguntas" required>
-            <option value="" disabled selected>Selecione o conteúdo</option>
-            <option value="aritmetica">Aritmética</option>
-            <option value="algebra">Álgebra</option>
-            <option value="geometria">Geometria</option>
-          </select>
-        </div>
+        <label for="categoria" class="me-2">Conteúdo</label>
+        <select v-model="categoria" @change="filtrarPerguntas" id="categoria" required>
+          <option value="" disabled selected>Selecione</option>
+          <option v-for="(categoria) in categorias" :key="categoria.id" :value="categoria.id">{{ categoria.descricao }}</option>
+        </select>
+      </div>
         <!-- Tabela de Perguntas -->
     <div class="perguntas-disponiveis">
       <h2>Perguntas</h2>
@@ -52,9 +40,9 @@
                 @change="selecionarPergunta(pergunta)"
               />
             </td>
-            <td>{{ pergunta.texto }}</td>
-            <td :class="getComplexidadeClass(pergunta.complexidade)">
-              {{ pergunta.complexidade }}
+            <td>{{ pergunta.descricao }}</td>
+            <td :class="getComplexidadeClass(pergunta.classificacao)">
+              {{ pergunta.classificacao }}
             </td>
           </tr>
         </tbody>
@@ -79,54 +67,115 @@
   <script>
 export default {
   data() {
-    return {
-      filtro: {
-        serie: '',
-        conteudo: '',
-      },
-      nome:'',
-      perguntas: [
-        { texto: 'Qual é o valor de 2 + 2?', complexidade: 'fácil', serie: '6', conteudo: 'aritmetica', selecionada: false },
-        { texto: 'Qual é o resultado de 5 * 6?', complexidade: 'fácil', serie: '7', conteudo: 'aritmetica', selecionada: false },
-        { texto: 'Qual é a raiz quadrada de 144?', complexidade: 'médio', serie: '8', conteudo: 'algebra', selecionada: false },
-        { texto: 'Resolva a equação: 2x + 3 = 7', complexidade: 'médio', serie: '9', conteudo: 'algebra', selecionada: false },
-        { texto: 'Qual é o valor do determinante da matriz 3x3?', complexidade: 'difícil', serie: '9', conteudo: 'geometria', selecionada: false },
-        // Adicione mais perguntas aqui...
-      ],
-      perguntasFiltradas: [],
-    };
-  },
-  mounted() {
-    this.filtrarPerguntas();
-  },
-  computed: {
-    perguntasSelecionadas() {
-      return this.perguntas.filter(pergunta => pergunta.selecionada);
+  return {
+    nome: '',
+    categoria: '',
+    categorias: [],
+    perguntas: [], 
+    perguntasFiltradas: [], 
+    pin: '', 
+  };
+},
+mounted() {
+  this.buscarCategorias();
+  this.buscarPerguntas();
+},
+methods: {
+  gerarPin() {
+      return Math.floor(1000 + Math.random() * 9000);  // Gera um número entre 1000 e 9999
+    },
+
+  async buscarCategorias() {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/categoria/vizualizar/`);
+      const data = await response.json();
+      this.categorias = data;
+    } catch (error) {
+      console.error('Erro ao buscar categorias:', error);
     }
   },
-  methods: {
-    getComplexidadeClass(complexidade) {
-      if (complexidade === 'fácil') return 'facil';
-      if (complexidade === 'médio') return 'medio';
-      if (complexidade === 'difícil') return 'dificil';
-      return '';
+  async buscarPerguntas() {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/questoes/vizualizar/`);
+      const data = await response.json();
+      this.perguntas = data.map(questao => ({
+        ...questao,
+        selecionada: false, // Adiciona uma propriedade para seleção no frontend
+      }));
+      console.log(this.perguntas)
+      this.filtrarPerguntas();
+    } catch (error) {
+      console.error('Erro ao buscar perguntas:', error);
+    }
+  },
+   async cadastrarJogo() {
+      try {
+        if (this.perguntasSelecionadas.length === 0) {
+          alert('Selecione ao menos uma pergunta para cadastrar o jogo.');
+          return;
+        }
+
+        const payload = {
+          titulo: this.nome,
+          categoria: this.categoria,
+          perguntas: this.perguntasSelecionadas.map(pergunta => pergunta.id),
+          pin: this.gerarPin(),  // Adiciona o PIN gerado ao payload
+        };
+
+        const response = await fetch('http://127.0.0.1:8000/jogos/cadastrar/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('Erro ao cadastrar jogo:', errorData);
+          throw new Error(errorData.detail || 'Erro ao cadastrar jogo');
+        }
+
+        const data = await response.json();
+        this.pin = data.pin;  // Salva o PIN retornado da API
+
+        alert('Jogo cadastrado com sucesso! PIN do jogo: ' + this.pin);
+
+        // Limpar o formulário
+        this.nome = '';
+        this.categoria = '';
+        this.perguntas.forEach(pergunta => (pergunta.selecionada = false));
+        this.buscarPerguntas;
+      } catch (error) {
+        console.error('Erro ao cadastrar jogo:', error.message);
+        alert(error.message);
+      }
     },
-    filtrarPerguntas() {
-      this.perguntasFiltradas = this.perguntas.filter(pergunta => {
-        return (!this.filtro.serie || pergunta.serie === this.filtro.serie) &&
-               (!this.filtro.conteudo || pergunta.conteudo === this.filtro.conteudo);
-      });
-    },
+  getComplexidadeClass(complexidade) {
+  const complexidadeLower = complexidade.toLowerCase();
+  if (complexidadeLower === 'fácil') return 'facil';
+  if (complexidadeLower === 'médio') return 'medio';
+  if (complexidadeLower === 'difícil') return 'dificil';
+  return '';
+}
+,
     selecionarPergunta(pergunta) {
       if (pergunta.selecionada && this.perguntasSelecionadas.length >= 10) {
         pergunta.selecionada = false;
       }
     },
-    configurarJogo() {
-      // Aqui você pode adicionar a lógica para configurar o jogo com as perguntas selecionadas
-      console.log("Perguntas selecionadas para o jogo:", this.perguntasSelecionadas);
-    }
-  }
+  filtrarPerguntas() {
+  this.perguntasFiltradas = this.perguntas.filter(pergunta => {
+    return !this.categoria || pergunta.categoria === this.categoria;
+  });
+}
+},
+computed: {
+  perguntasSelecionadas() {
+    return this.perguntas.filter(pergunta => pergunta.selecionada);
+  },
+},
+
 };
 </script>
   

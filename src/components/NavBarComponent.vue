@@ -12,13 +12,10 @@
                 <a class="nav-link active" aria-current="page" href="/inicio">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/turmas">Visualizar Turmas</a>
+                <a class="nav-link" href="/turmas">Turmas</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/cadastro-turma">Criar Turma</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/cadastrar-jogo">Criar Jogo</a>
+                <a class="nav-link" href="/jogos">Jogos</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/cadastrar-perguntas">Criar Questões</a>
@@ -32,7 +29,7 @@
                     Perfil
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="/meuperfil"><i class="fas fa-user"></i> Meu Perfil</a></li>
+                    <li><a class="dropdown-item" href="/meu-perfil"><i class="fas fa-user"></i> Meu Perfil</a></li>
                     <li><a class="dropdown-item" href="/login-professor" @click="confirmAction"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
                 </ul>
               </li>
@@ -110,7 +107,7 @@
   
   /* Adiciona margem superior ao conteúdo para evitar sobreposição com o navbar */
   .content {
-    margin-top: 50px;
+    margin-top: 30px;
   }
   
   .bg-universe {

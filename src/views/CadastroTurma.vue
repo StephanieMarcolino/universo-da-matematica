@@ -55,17 +55,32 @@ export default {
             }
             return years;
         },
-        cadastrarTurma() {
-            // adicionar a lógica para salvar a turma
-            console.log('Turma cadastrada:', this.turma);
-            // Limpar o formulário após o cadastro
-            this.turma = {
-                nome: '',
-                escola: '',
-                serie: '',
-                ano: null,
-            };
-            alert('Turma cadastrada com sucesso!');
+        async cadastrarTurma() {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/turmas/cadastrar/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(this.turma), // Envia os dados da turma em formato JSON
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro ao cadastrar a turma');
+                }
+
+                // Limpar o formulário após o cadastro
+                this.turma = {
+                    nome: '',
+                    escola: '',
+                    serie: '',
+                    ano: null,
+                };
+                alert('Turma cadastrada com sucesso!');
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Falha ao cadastrar a turma.');
+            }
         },
     },
 };

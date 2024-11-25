@@ -16,10 +16,7 @@
     data() {
       return {
         games: [
-      { id: 1, name: 'Jogo 1', image: require('../assets/jogo1.jpg') },
-      { id: 2, name: 'Jogo 2', image: require('../assets/jogo2.jpg') },
-      { id: 3, name: 'Jogo 3', image: require('../assets/jogo3.jpg') },
-      { id: 4, name: 'Jogo 4', image: require('../assets/jogo4.jpg') },
+      { id: 1, name: 'Trilha dos Múltiplos e Divisores', image: require('../assets/jogo1.png') },
     ],
       };
     },
