@@ -14,10 +14,25 @@ class TurmaSerializer(serializers.ModelSerializer):
         #fields = ('id', 'nome', 'ano')  
 
 class JogoSerializer(serializers.ModelSerializer):
+    perguntas = serializers.ListField(
+        child=serializers.IntegerField(), write_only=True
+    )
+
     class Meta:
         model = Jogo
-        fields ="__all__"
-        #fields = ('id', 'titulo', 'categoria')  
+        fields = ['id', 'titulo', 'categoria', 'data', 'pin', 'perguntas']
+
+    def create(self, validated_data):
+        perguntas_ids = validated_data.pop('perguntas', [])
+        jogo = Jogo.objects.create(**validated_data)
+
+        # Cria associações no modelo intermediário
+        for questao_id in perguntas_ids:
+            questao = Questao.objects.filter(id=questao_id).first()
+            if questao:
+                Questao_Jogo.objects.create(jogo=jogo, questao=questao)
+
+        return jogo
 
 class QuestaoSerializer(serializers.ModelSerializer):
     class Meta:

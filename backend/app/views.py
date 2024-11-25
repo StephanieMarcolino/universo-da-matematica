@@ -106,6 +106,7 @@ class JogoListCreateAPIView(generics.GenericAPIView, mixins.ListModelMixin, mixi
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs) 
 
+
 class JogoRetrieveUpdateDestroyAPIView(generics.GenericAPIView, mixins.RetrieveModelMixin,
                                        mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     queryset = Jogo.objects.all()
@@ -123,7 +124,6 @@ class JogoRetrieveUpdateDestroyAPIView(generics.GenericAPIView, mixins.RetrieveM
 class QuestaoViewSet(viewsets.ModelViewSet):
     queryset = Questao.objects.all() 
     serializer_class = QuestaoSerializer
-
 
 class QuestaoListCreateAPIView(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
     queryset = Questao.objects.all()
