@@ -91,6 +91,7 @@ export default {
                     this.loadingSubmit = false;
 
                     localStorage.setItem("jogoId", data.id);
+                    localStorage.setItem("turmaId", this.turma);
                     await this.salvarAluno()
                     this.$router.push('/mapa');
                     

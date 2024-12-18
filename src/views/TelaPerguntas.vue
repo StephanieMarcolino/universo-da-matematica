@@ -9,6 +9,9 @@
         </div>
 
         <div class="card">
+            <h3 :class="getComplexidadeClass(perguntaAtual.classificacao)">
+              {{ perguntaAtual.classificacao }}
+            </h3>
             <h2>{{ perguntaAtual.id }}. {{ perguntaAtual.descricao }}</h2>
             <hr />
             <div class="card-alternativa" v-for="(alternativa, index) in alternativasEmbaralhadas" :key="index"
@@ -242,6 +245,13 @@ export default {
         toggleMenu() {
             this.isMenuOpen = !this.isMenuOpen;
         },
+        getComplexidadeClass(complexidade) {
+  const complexidadeLower = complexidade.toLowerCase();
+  if (complexidadeLower === 'fácil') return 'facil';
+  if (complexidadeLower === 'médio') return 'medio';
+  if (complexidadeLower === 'difícil') return 'dificil';
+  return '';
+},
 
         fecharPopup() {
             this.exibirPopup = false;
@@ -505,5 +515,17 @@ export default {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.facil {
+  color: green;
+}
+
+.medio {
+  color: orange;
+}
+
+.dificil {
+  color: red;
 }
 </style>

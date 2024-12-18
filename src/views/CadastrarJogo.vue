@@ -157,8 +157,7 @@ methods: {
   if (complexidadeLower === 'médio') return 'medio';
   if (complexidadeLower === 'difícil') return 'dificil';
   return '';
-}
-,
+},
     selecionarPergunta(pergunta) {
       if (pergunta.selecionada && this.perguntasSelecionadas.length >= 10) {
         pergunta.selecionada = false;

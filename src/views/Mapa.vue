@@ -62,9 +62,36 @@
         </label>
       </div>
 
+      <!-- Botão para Ranking -->
+      <button @click="abrirRanking">Ranking</button>
+
       <!-- Fechar Popup -->
       <button @click="toggleMenu">Fechar</button>
     </div>
+
+<!-- Popup do Ranking -->
+<div v-if="mostrarRanking" class="ranking-popup">
+      <h3>Ranking da Turma</h3>
+      <ul>
+      <li
+        v-for="(aluno, index) in ranking"
+        :key="aluno.id"
+        :class="[
+          'aluno-item',
+          { destaque: aluno.id === Number(alunoId) },
+          { ouro: index === 0 },
+          { prata: index === 1 },
+          { bronze: index === 2 }
+        ]"
+      >
+      {{ index + 1 }}. {{ aluno.nome }} - {{ aluno.pontuacao }} pontos
+        <!-- Ícone de estrela para o aluno logado -->
+        <i v-if="aluno.id === Number(alunoId)" class="fa fa-star estrela"></i>
+      </li>
+    </ul>
+      <button @click="fecharRanking">Fechar</button>
+    </div>
+
   </div>
 </template>
 
@@ -106,6 +133,9 @@ export default {
       jogo: localStorage.getItem("jogoId"),
       perguntas: [],
       alunoId: localStorage.getItem("aluno"),
+      mostrarRanking: false,
+    ranking: [],
+    turma: localStorage.getItem("turmaId")
     };
   },
   async mounted() {
@@ -162,10 +192,6 @@ export default {
         this.nivelAtual = data.progresso;
         this.niveisCompletos = Array.from({ length: this.nivelAtual }, (_, i) => i + 1);
         this.pontuacao = data.pontuacao;
-        console.log('entrou fech progress')
-    console.log('aluno', this.alunoId)
-    console.log('pontuacao', this.pontuacao)
-    console.log('progresso', this.nivelAtual)
         if (this.nivelAtual === 11) {
           this.nivelConcluido = true;
         }
@@ -220,7 +246,25 @@ export default {
     },
     fecharPopup() {
       this.nivelConcluido = false;
+    },
+    async abrirRanking() {
+    this.loadingSubmit = true;
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/turmas/${this.turma}/alunos/`);
+        const data = await response.json();
+        // Ordena os alunos pela pontuação (do maior para o menor)
+        this.ranking = data.sort((a, b) => b.pontuacao - a.pontuacao);
+        console.log(this.ranking)
+      this.mostrarRanking = true;
+    } catch (error) {
+      console.error('Erro ao buscar ranking:', error);
+    } finally {
+      this.loadingSubmit = false;
     }
+  },
+  fecharRanking() {
+    this.mostrarRanking = false;
+  },
   },
 };
 </script>
@@ -347,6 +391,7 @@ svg {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin-right: 5px;
 }
 .congratulations-popup {
   position: fixed;
@@ -373,6 +418,58 @@ svg {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.ranking-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+  z-index: 1000;
+}
+
+.ranking-popup ul {
+  list-style: none;
+  padding: 0;
+}
+
+.ranking-popup li {
+  margin: 10px 0;
+}
+
+.ranking-popup button {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #000064;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+.destaque {
+  font-weight: bold;
+}
+
+.ouro {
+  color: gold;
+}
+
+.prata {
+  color: silver;
+}
+
+.bronze {
+  color: #cd7f32; /* Tom de bronze */
+}
+
+.estrela {
+  margin-left: 10px;
+  color: gold;
 }
 
 </style>
