@@ -1,16 +1,47 @@
-from django.shortcuts import render
-from rest_framework import generics, mixins, viewsets
+import json, logging
+from rest_framework import generics, mixins, viewsets, status
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
+from rest_framework.permissions import AllowAny
 from app.models import Professor, Turma, Jogo, Questao, Aluno, Categoria, Questao_Jogo, Jogo_Turma, Turma_Aluno
 from .serializers import ProfessorSerializer, TurmaSerializer, JogoSerializer, QuestaoSerializer, AlunoSerializer, CategoriaSerializer, QuestaoJogoSerializer, JogoTurmaSerializer, TurmaAlunoSerializer
-from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from rest_framework.decorators import api_view
-from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import make_password, check_password
+from django.http import JsonResponse
+from django.shortcuts import render
 
+logger = logging.getLogger(__name__)
+
+def cadastrarProfessor(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        nome = data.get('nome')
+        email = data.get('email')
+        senha = data.get('senha')
+        senhaHash = make_password(senha)
+        novoProfessor = Professor(nome=nome, email=email, senha=senhaHash)
+        novoProfessor.save()
+        return JsonResponse({'message': 'Professor cadastrado com sucesso!'}, status=201)
+
+@csrf_exempt
+def autenticarProfessor(request):
+    print(f"Request body: {request.body}")
+    if request.method == 'POST':
+        data = json.loads(request.body) 
+        print(f"Data parsed: {data}")
+        email = data.get('email') 
+        senhaInput = data.get('senha')
+        try:
+            professor = Professor.objects.get(email=email)
+        except Professor.DoesNotExist:
+            return JsonResponse({'error': 'Professor nao encontrado!'}, status=404)
+        
+        if check_password(senhaInput, professor.senha):
+            return JsonResponse({'message': 'Login bem-sucedido!'}, status=200)
+        return JsonResponse({'error': 'Credenciais invalidas!'}, status=400)
 
 class ProfessorMenuView(APIView):
     permission_classes = [AllowAny]  # Permite que qualquer um acesse essa view

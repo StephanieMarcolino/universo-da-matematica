@@ -1,11 +1,18 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password
 
 
 class Professor(models.Model):
     nome = models.CharField('nome', max_length=255, null=True, blank=False)
-    email = models.CharField('email', max_length=255, null=True, blank=False)
+    email = models.EmailField('email', unique=True, default="professor@email.com")
     senha = models.CharField('senha', max_length=64, null=True, blank=False)
     data = models.DateTimeField(auto_now_add=True,  null=True)
+
+    def save(self, *args, **kwargs):
+        if self.senha and not self.senha.startswith('pbkdf2_sha256'):  # Verifica se já está hashada
+            print(f"Hashing senha: {self.senha}")  
+            self.senha = make_password(self.senha)  
+        super().save(*args, **kwargs)
 
 class Turma(models.Model):
     nome = models.CharField('nome', max_length=100, null=False, blank=False)

@@ -48,7 +48,8 @@ from app.views import (
     TurmaAlunoListCreateAPIView,
     get_jogo_by_pin,
     get_questoes_by_jogo,
-    get_alunos_by_turma
+    get_alunos_by_turma,
+    autenticarProfessor
 )
 
 router = routers.DefaultRouter()
@@ -66,6 +67,7 @@ urlpatterns = [
     path('professor/menu/', ProfessorMenuView.as_view(), name='menu-professor'),
     path('professor/cadastrar/', ProfessorListCreateAPIView.as_view(), name='professor-list-create'),
     path('professor/<int:pk>/', ProfessorRetrieveUpdateDestroyAPIView.as_view(), name='professor-detail'),
+    path('professor/login/', autenticarProfessor, name='login-professor'),
 
     # Rotas para Aluno
     path('alunos/vizualizar/', AlunoViewSet.as_view({'get': 'list'})),
